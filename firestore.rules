@@ -1,0 +1,93 @@
+/**
+ * @fileOverview
+ * This ruleset enforces a strict user-ownership model for the Todist application.
+ *
+ * Data Structure:
+ * - Users are stored in `/users/{userId}`.
+ * - Tasks are stored in `/users/{userId}/tasks/{taskId}`, nested under each user.
+ *
+ * Key Security Decisions:
+ * - Users can only manage their own user document.
+ * - Users can only create, read, update, and delete tasks within their own user document.
+ * - Listing tasks is allowed only for the owner.
+ *
+ * Denormalization for Authorization:
+ * - The `userId` is embedded in the path `/users/{userId}/tasks/{taskId}`.  Rules will enforce that the `userId` in the path matches the authenticated user's UID.
+ *
+ * Structural Segregation:
+ * - User-specific data (tasks) is stored in a subcollection, ensuring that listing tasks is always scoped to a single user.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Defines the isSignedIn helper function to verify that a user is signed in.
+     * @returns {boolean} True if the request has valid authentication credentials, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Defines the isOwner helper function to check if the authenticated user ID matches the provided user ID.
+     * @param {string} userId The user ID to compare against the authenticated user ID.
+     * @returns {boolean} True if the user ID matches the authenticated user ID, false otherwise.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Defines the isExistingOwner helper function to check if the authenticated user ID matches the provided user ID and the resource exists.
+     * @param {string} userId The user ID to compare against the authenticated user ID.
+     * @returns {boolean} True if the user ID matches the authenticated user ID and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Security rules for user profiles.
+     * @path /users/{userId}
+     * @allow (create) - Authenticated user can create their own profile.
+     * @allow (get) - Authenticated user can get their own profile.
+     * @allow (update) - Authenticated user can update their own profile.
+     * @allow (delete) - Authenticated user can delete their own profile.
+     * @deny (create) - Non-authenticated user attempts to create a profile.
+     * @deny (update) - Authenticated user attempts to update another user's profile.
+     * @deny (delete) - Authenticated user attempts to delete another user's profile.
+     * @principle Enforces document ownership for all writes.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Security rules for tasks associated with a user.
+     * @path /users/{userId}/tasks/{taskId}
+     * @allow (create) - Authenticated user can create a task in their own profile.
+     * @allow (get) - Authenticated user can get a task in their own profile.
+     * @allow (list) - Authenticated user can list tasks in their own profile.
+     * @allow (update) - Authenticated user can update a task in their own profile.
+     * @allow (delete) - Authenticated user can delete a task in their own profile.
+     * @deny (create) - Non-authenticated user attempts to create a task.
+     * @deny (update) - Authenticated user attempts to update another user's task.
+     * @deny (delete) - Authenticated user attempts to delete another user's task.
+     * @principle Enforces document ownership for all writes, and enforces that the userId in the path matches the task's userId field.
+     */
+    match /users/{userId}/tasks/{taskId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
