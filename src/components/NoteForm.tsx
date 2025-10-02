@@ -28,7 +28,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
   const [tagInput, setTagInput] = useState("");
   
   const noteRef = noteId && user ? doc(firestore, `users/${user.uid}/tasks`, noteId) : null;
-  const { data: note, isLoading } = useDoc<Note>(noteRef);
+  const { data: note, isLoading } = useDoc<Note>(noteId ? noteRef : null);
 
   useEffect(() => {
     if (note) {
