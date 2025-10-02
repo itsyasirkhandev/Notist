@@ -61,14 +61,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
       onDragEnd={onDragEnd}
       onDragOver={(e) => e.preventDefault()}
       className={cn(
-        "group flex items-start gap-2 rounded-lg border bg-card p-2.5 transition-shadow",
+        "group flex items-start gap-2 rounded-lg border bg-card p-3 transition-shadow hover:shadow-md",
         isDragged && "opacity-50 shadow-xl scale-105",
         "focus-within:ring-2 focus-within:ring-ring"
       )}
       aria-roledescription="Draggable note item"
     >
       <TooltipProvider>
-      <div className="flex items-center gap-2 h-9">
+      <div className="flex items-center gap-2 pt-1">
         <Tooltip>
           <TooltipTrigger asChild>
             <button className="p-1 cursor-grab focus:cursor-grabbing active:cursor-grabbing focus:outline-none focus:ring-1 focus:ring-ring rounded-sm" aria-label="Drag to reorder">
@@ -93,17 +93,17 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <span
               id={`note-label-${note.id}`}
               className={cn(
-                "font-medium text-sm transition-colors",
+                "font-medium text-base transition-colors",
                 note.completed ? "text-muted-foreground line-through" : "text-foreground"
               )}
             >
               {note.title}
             </span>
             <p className={cn(
-                "text-sm transition-colors text-muted-foreground",
+                "text-sm transition-colors text-muted-foreground mt-1",
                 note.completed ? "line-through" : ""
               )}>
-                {note.content.substring(0, 100)}{note.content.length > 100 && '...'}
+                {note.content.substring(0, 120)}{note.content.length > 120 && '...'}
             </p>
             <div className="mt-2 flex gap-1 flex-wrap">
                 {note.tags.map(tag => (
@@ -113,7 +113,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </Link>
       
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity h-9">
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pt-1">
         <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onMove(note.id, 'up')} disabled={isFirst} aria-label="Move note up">

@@ -3,8 +3,8 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Info, NotebookPen } from "lucide-react";
-import React, { useState, useEffect, DragEvent } from "react";
+import { Info, NotebookPen, Search } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
 import NoteItem from "./NoteItem";
 import {
   AlertDialog,
@@ -18,18 +18,25 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Link from "next/link";
+import { Input } from "./ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 const initialNotes: Note[] = [
   { id: "1", title: "Welcome to Notes!", content: "Get started by adding a note.", tags: ["getting-started"], completed: false, createdAt: new Date().toISOString() },
-  { id: "2", title: "Mark as complete", content: "Use the checkbox to mark notes as complete.", tags: [], completed: true, createdAt: new Date().toISOString() },
-  { id: "3", title: "Drag and drop", content: "Drag and drop to reorder your notes.", tags: [], completed: false, createdAt: new Date().toISOString() },
-  { id: "4", title: "Edit or delete", content: "Use the buttons on the right to edit or delete.", tags: [], completed: false, createdAt: new Date().toISOString() },
+  { id: "2", title: "Mark as complete", content: "Use the checkbox to mark notes as complete.", tags: ["tutorial"], completed: true, createdAt: new Date().toISOString() },
+  { id: "3", title: "Drag and drop", content: "Drag and drop to reorder your notes.", tags: ["tutorial"], completed: false, createdAt: new Date().toISOString() },
+  { id: "4", title: "Edit or delete", content: "Use the buttons on the right to edit or delete.", tags: ["tutorial"], completed: false, createdAt: new Date().toISOString() },
+  { id: "5", title: "Search and Filter", content: "Use the search bar and filter dropdowns to find your notes.", tags: ["new-feature", "getting-started"], completed: false, createdAt: new Date().toISOString() },
 ];
 
 export function NoteList() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [draggedItem, setDraggedItem] = useState<Note | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterTag, setFilterTag] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "completed">("all");
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -60,6 +67,30 @@ export function NoteList() {
       }
     }
   }, [notes, isMounted]);
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    notes.forEach(note => note.tags.forEach(tag => tags.add(tag)));
+    return Array.from(tags).sort();
+  }, [notes]);
+
+  const filteredNotes = useMemo(() => {
+    return notes
+      .filter(note => {
+        const matchesSearch = searchTerm.trim() === "" ||
+          note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          note.content.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesTag = filterTag === "all" || note.tags.includes(filterTag);
+
+        const matchesStatus = filterStatus === "all" ||
+            (filterStatus === "completed" && note.completed) ||
+            (filterStatus === "active" && !note.completed);
+
+        return matchesSearch && matchesTag && matchesStatus;
+      });
+  }, [notes, searchTerm, filterTag, filterStatus]);
+
 
   const handleToggleComplete = (id: string) => {
     setNotes(
@@ -97,16 +128,18 @@ export function NoteList() {
   const handleDragEnter = (targetNote: Note) => {
     if (!draggedItem || draggedItem.id === targetNote.id) return;
     
-    const newNotes = [...notes];
-    const draggedIndex = newNotes.findIndex(t => t.id === draggedItem.id);
-    const targetIndex = newNotes.findIndex(t => t.id === targetNote.id);
+    // Find original indexes in the main notes array
+    const originalNotes = [...notes];
+    const draggedIndex = originalNotes.findIndex(t => t.id === draggedItem.id);
+    const targetIndex = originalNotes.findIndex(t => t.id === targetNote.id);
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
-    const [removed] = newNotes.splice(draggedIndex, 1);
-    newNotes.splice(targetIndex, 0, removed);
+    // Perform the swap
+    const [removed] = originalNotes.splice(draggedIndex, 1);
+    originalNotes.splice(targetIndex, 0, removed);
     
-    setNotes(newNotes);
+    setNotes(originalNotes);
   };
 
   const handleDragEnd = () => {
@@ -122,7 +155,7 @@ export function NoteList() {
   return (
     <Card className="w-full shadow-lg">
       <CardHeader>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
             <Link href="/notes/new" className="w-full">
                 <Button className="w-full" aria-label="Add Note">
                     <NotebookPen className="h-4 w-4 mr-2" />
@@ -130,11 +163,45 @@ export function NoteList() {
                 </Button>
             </Link>
         </div>
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+            <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                    placeholder="Search notes..."
+                    className="pl-10 w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+            <div className="flex gap-2">
+              <Select value={filterTag} onValueChange={setFilterTag}>
+                <SelectTrigger className="w-full sm:w-[150px]">
+                  <SelectValue placeholder="Filter by tag" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Tags</SelectItem>
+                  {allTags.map(tag => (
+                    <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as any)}>
+                <SelectTrigger className="w-full sm:w-[150px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+        </div>
       </CardHeader>
       <CardContent>
-        {notes.length > 0 ? (
+        {filteredNotes.length > 0 ? (
           <ul className="space-y-2">
-            {notes.map((note, index) => (
+            {filteredNotes.map((note, index) => (
               <NoteItem
                 key={note.id}
                 note={note}
@@ -146,15 +213,15 @@ export function NoteList() {
                 onDragEnter={handleDragEnter}
                 onDragEnd={handleDragEnd}
                 isFirst={index === 0}
-                isLast={index === notes.length - 1}
+                isLast={index === filteredNotes.length - 1}
               />
             ))}
           </ul>
         ) : (
           <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
             <Info className="h-6 w-6"/>
-            <p className="font-medium">No notes yet!</p>
-            <p className="text-sm">Add one above to get started.</p>
+            <p className="font-medium">No notes match your filters!</p>
+            <p className="text-sm">Try a different search or filter.</p>
           </div>
         )}
         {notes.length > 0 && completedCount > 0 && (
