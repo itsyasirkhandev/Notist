@@ -1,5 +1,5 @@
+import { Auth } from '@/components/Auth';
 import { NoteList } from '@/components/NoteList';
-import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
             <h1 className="text-2xl font-bold tracking-tight">
               Notes
             </h1>
-            <ThemeToggle />
+            <Auth />
         </div>
       </div>
       <div className="w-full max-w-5xl mx-auto p-4 md:py-8">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Note } from "@/lib/types";
@@ -30,7 +31,7 @@ import { Badge } from "./ui/badge";
 interface NoteItemProps {
   note: Note;
   isDragged: boolean;
-  onToggleComplete: (id: string) => void;
+  onToggleComplete: (id: string, completed: boolean) => void;
   onDelete: (id: string) => void;
   onMove: (id: string, direction: 'up' | 'down') => void;
   onDragStart: (note: Note) => void;
@@ -93,7 +94,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         <Checkbox
           id={`note-${note.id}`}
           checked={note.completed}
-          onCheckedChange={() => onToggleComplete(note.id)}
+          onCheckedChange={(checked) => onToggleComplete(note.id, !!checked)}
           aria-labelledby={`note-label-${note.id}`}
         />
       </div>
@@ -118,7 +119,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 {truncatedContent.substring(0, 120)}{truncatedContent.length > 120 ? '...' : ''}
               </p>
             <div className="mt-2 flex gap-1 flex-wrap">
-                {note.tags.map(tag => (
+                {note.tags && note.tags.map(tag => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
                 ))}
             </div>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Note } from "@/lib/types";
@@ -20,105 +21,80 @@ import {
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-
-const initialNotes: Note[] = [
-  { id: "1", title: "Welcome to Notes!", content: "Get started by adding a note.", tags: ["getting-started"], completed: false, createdAt: new Date().toISOString() },
-  { id: "2", title: "Mark as complete", content: "Use the checkbox to mark notes as complete.", tags: ["tutorial"], completed: true, createdAt: new Date().toISOString() },
-  { id: "3", title: "Drag and drop", content: "Drag and drop to reorder your notes.", tags: ["tutorial"], completed: false, createdAt: new Date().toISOString() },
-  { id: "4", title: "Edit or delete", content: "Use the buttons on the right to edit or delete.", tags: ["tutorial"], completed: false, createdAt: new Date().toISOString() },
-  { id: "5", title: "Search and Filter", content: "Use the search bar and filter dropdowns to find your notes.", tags: ["new-feature", "getting-started"], completed: false, createdAt: new Date().toISOString() },
-];
+import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
+import { collection, doc, orderBy, query, where } from "firebase/firestore";
+import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 export function NoteList() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const { user, firestore } = useFirebase();
   const [draggedItem, setDraggedItem] = useState<Note | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "completed">("all");
 
-
-  useEffect(() => {
-    setIsMounted(true);
-    try {
-      const storedNotes = localStorage.getItem("notes-app-notes");
-      if (storedNotes) {
-        const parsedNotes = JSON.parse(storedNotes);
-        if(parsedNotes.length === 0){
-          setNotes(initialNotes);
-        } else {
-          setNotes(parsedNotes);
-        }
-      } else {
-        setNotes(initialNotes);
+  const notesQuery = useMemoFirebase(() => {
+      if (!user) return null;
+      
+      const baseQuery = collection(firestore, `users/${user.uid}/tasks`);
+      
+      let conditions = [];
+      if (filterStatus !== 'all') {
+          conditions.push(where('completed', '==', filterStatus === 'completed'));
       }
-    } catch (error) {
-      console.error("Failed to load notes from localStorage", error);
-      setNotes(initialNotes);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
-      try {
-        localStorage.setItem("notes-app-notes", JSON.stringify(notes));
-      } catch (error) {
-        console.error("Failed to save notes to localStorage", error);
+      if (filterTag !== 'all') {
+          conditions.push(where('tags', 'array-contains', filterTag));
       }
-    }
-  }, [notes, isMounted]);
 
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    notes.forEach(note => note.tags.forEach(tag => tags.add(tag)));
-    return Array.from(tags).sort();
-  }, [notes]);
+      return query(baseQuery, ...conditions, orderBy('createdAt', 'desc'));
+  }, [user, firestore, filterStatus, filterTag]);
+
+  const { data: notes, isLoading } = useCollection<Note>(notesQuery);
 
   const filteredNotes = useMemo(() => {
+    if (!notes) return [];
     return notes
       .filter(note => {
         const matchesSearch = searchTerm.trim() === "" ||
           note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          note.content.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        const matchesTag = filterTag === "all" || note.tags.includes(filterTag);
-
-        const matchesStatus = filterStatus === "all" ||
-            (filterStatus === "completed" && note.completed) ||
-            (filterStatus === "active" && !note.completed);
-
-        return matchesSearch && matchesTag && matchesStatus;
+          (note.content && note.content.toLowerCase().includes(searchTerm.toLowerCase()));
+        return matchesSearch;
       });
-  }, [notes, searchTerm, filterTag, filterStatus]);
+  }, [notes, searchTerm]);
+
+  const allTags = useMemo(() => {
+    if (!notes) return [];
+    const tags = new Set<string>();
+    notes.forEach(note => note.tags?.forEach(tag => tags.add(tag)));
+    return Array.from(tags).sort();
+  }, [notes]);
 
 
-  const handleToggleComplete = (id: string) => {
-    setNotes(
-      notes.map((note) =>
-        note.id === id ? { ...note, completed: !note.completed } : note
-      )
-    );
+  const handleToggleComplete = (id: string, completed: boolean) => {
+    if (!user) return;
+    const docRef = doc(firestore, `users/${user.uid}/tasks`, id);
+    updateDocumentNonBlocking(docRef, { completed });
   };
 
   const handleDeleteNote = (id: string) => {
-    setNotes(notes.filter((note) => note.id !== id));
+    if (!user) return;
+    const docRef = doc(firestore, `users/${user.uid}/tasks`, id);
+    deleteDocumentNonBlocking(docRef);
   };
   
   const handleClearCompleted = () => {
-    setNotes(notes.filter((note) => !note.completed));
+    if (!user || !notes) return;
+    const completedNotes = notes.filter(note => note.completed);
+    completedNotes.forEach(note => {
+        const docRef = doc(firestore, `users/${user.uid}/tasks`, note.id);
+        deleteDocumentNonBlocking(docRef);
+    });
   }
   
   const handleMove = (id: string, direction: 'up' | 'down') => {
-    const index = notes.findIndex(note => note.id === id);
-    if (index === -1) return;
-
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= notes.length) return;
-
-    const newNotes = [...notes];
-    const [movedNote] = newNotes.splice(index, 1);
-    newNotes.splice(newIndex, 0, movedNote);
-    setNotes(newNotes);
+    // Note: Reordering is complex with Firestore queries.
+    // A simple implementation would require a dedicated 'order' field.
+    // For now, this is a placeholder.
+    console.log("Moving not yet implemented with Firestore backend");
   }
 
   const handleDragStart = (note: Note) => {
@@ -126,30 +102,28 @@ export function NoteList() {
   };
 
   const handleDragEnter = (targetNote: Note) => {
+     // Note: Reordering is complex with Firestore queries.
     if (!draggedItem || draggedItem.id === targetNote.id) return;
-    
-    // Find original indexes in the main notes array
-    const originalNotes = [...notes];
-    const draggedIndex = originalNotes.findIndex(t => t.id === draggedItem.id);
-    const targetIndex = originalNotes.findIndex(t => t.id === targetNote.id);
-
-    if (draggedIndex === -1 || targetIndex === -1) return;
-
-    // Perform the swap
-    const [removed] = originalNotes.splice(draggedIndex, 1);
-    originalNotes.splice(targetIndex, 0, removed);
-    
-    setNotes(originalNotes);
+    console.log("Dragging not yet implemented with Firestore backend");
   };
 
   const handleDragEnd = () => {
     setDraggedItem(null);
   };
 
-  const completedCount = notes.filter(t => t.completed).length;
+  const completedCount = notes?.filter(t => t.completed).length || 0;
 
-  if (!isMounted) {
-    return null; // or a loading skeleton
+  if (!user && !isLoading) {
+    return (
+        <Card className="w-full shadow-lg">
+            <CardContent>
+                <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
+                    <Info className="h-6 w-6"/>
+                    <p className="font-medium">Please sign in to see your notes.</p>
+                </div>
+            </CardContent>
+        </Card>
+    )
   }
 
   return (
@@ -199,7 +173,8 @@ export function NoteList() {
         </div>
       </CardHeader>
       <CardContent>
-        {filteredNotes.length > 0 ? (
+        {isLoading && <p>Loading notes...</p>}
+        {!isLoading && filteredNotes.length > 0 ? (
           <ul className="space-y-2">
             {filteredNotes.map((note, index) => (
               <NoteItem
@@ -218,13 +193,15 @@ export function NoteList() {
             ))}
           </ul>
         ) : (
-          <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
-            <Info className="h-6 w-6"/>
-            <p className="font-medium">No notes match your filters!</p>
-            <p className="text-sm">Try a different search or filter.</p>
-          </div>
+          !isLoading && (
+            <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
+              <Info className="h-6 w-6"/>
+              <p className="font-medium">No notes match your filters!</p>
+              <p className="text-sm">Try a different search or filter.</p>
+            </div>
+          )
         )}
-        {notes.length > 0 && completedCount > 0 && (
+        {notes && notes.length > 0 && completedCount > 0 && (
            <div className="mt-4 flex justify-end">
             <AlertDialog>
               <AlertDialogTrigger asChild>

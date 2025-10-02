@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Note } from "@/lib/types";
@@ -10,6 +11,9 @@ import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { RichTextEditor } from "./RichTextEditor";
+import { useDoc, useFirebase } from "@/firebase";
+import { doc, serverTimestamp } from "firebase/firestore";
+import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 interface NoteFormProps {
     noteId?: string;
@@ -17,31 +21,22 @@ interface NoteFormProps {
 
 export function NoteForm({ noteId }: NoteFormProps) {
   const router = useRouter();
+  const { firestore, user } = useFirebase();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
+  
+  const noteRef = noteId && user ? doc(firestore, `users/${user.uid}/tasks`, noteId) : null;
+  const { data: note, isLoading } = useDoc<Note>(noteRef);
 
   useEffect(() => {
-    setIsMounted(true);
-    if (noteId) {
-        try {
-            const storedNotes = localStorage.getItem("notes-app-notes");
-            if (storedNotes) {
-                const notes: Note[] = JSON.parse(storedNotes);
-                const noteToEdit = notes.find(n => n.id === noteId);
-                if (noteToEdit) {
-                    setTitle(noteToEdit.title);
-                    setContent(noteToEdit.content);
-                    setTags(noteToEdit.tags);
-                }
-            }
-        } catch (error) {
-            console.error("Failed to load note from localStorage", error);
-        }
+    if (note) {
+      setTitle(note.title);
+      setContent(note.content);
+      setTags(note.tags || []);
     }
-  }, [noteId]);
+  }, [note]);
 
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -60,37 +55,34 @@ export function NoteForm({ noteId }: NoteFormProps) {
   
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!user || !firestore) return;
     if (title.trim() === "" && content.trim() === "") return;
-    
-    try {
-        const storedNotes = localStorage.getItem("notes-app-notes");
-        const notes: Note[] = storedNotes ? JSON.parse(storedNotes) : [];
-        
-        if (noteId) {
-            const updatedNotes = notes.map(n => 
-                n.id === noteId ? { ...n, title, content, tags } : n
-            );
-            localStorage.setItem("notes-app-notes", JSON.stringify(updatedNotes));
-        } else {
-            const newNote: Note = {
-                id: crypto.randomUUID(),
-                title,
-                content,
-                tags,
-                completed: false,
-                createdAt: new Date().toISOString(),
-            };
-            localStorage.setItem("notes-app-notes", JSON.stringify([newNote, ...notes]));
-        }
 
-        router.push("/");
-    } catch(error) {
-        console.error("Failed to save note to localStorage", error);
+    const noteData = {
+        title,
+        content,
+        tags,
+        updatedAt: serverTimestamp(),
+    };
+    
+    if (noteId) {
+        const docRef = doc(firestore, `users/${user.uid}/tasks`, noteId);
+        setDocumentNonBlocking(docRef, noteData, { merge: true });
+    } else {
+        const collectionRef = doc(firestore, `users/${user.uid}/tasks`);
+        addDocumentNonBlocking(collectionRef, {
+            ...noteData,
+            completed: false,
+            createdAt: serverTimestamp(),
+            userId: user.uid,
+        });
     }
+
+    router.push("/");
   };
 
-  if (!isMounted) {
-    return null; // Or a loading skeleton
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
   return (
