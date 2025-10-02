@@ -141,7 +141,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange 
             dangerouslySetInnerHTML={{ __html: value }}
             className={cn(
                 "prose dark:prose-invert max-w-none min-h-[200px] w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                !value && "text-muted-foreground before:content-['']"
+                !value && "text-muted-foreground"
             )}
         />
     </div>
