@@ -9,7 +9,7 @@ import { Plus, Tag, X } from "lucide-react";
 import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
-import { Textarea } from "./ui/textarea";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface NoteFormProps {
     noteId?: string;
@@ -94,7 +94,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-lg border-none">
+    <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4 p-4 md:p-6">
           <div className="space-y-2">
@@ -108,16 +108,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
               className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-2"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="content" className="sr-only">Content</Label>
-            <Textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Your note..."
-              className="min-h-[250px] text-base"
-            />
-          </div>
+          <RichTextEditor value={content} onChange={setContent} />
           <div className="space-y-2">
             <Label htmlFor="tags" className="sr-only">Tags</Label>
             <div className="flex items-center gap-2 rounded-md border border-input px-3 py-1">

@@ -104,9 +104,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
                   "prose prose-sm dark:prose-invert max-w-none text-sm transition-colors text-muted-foreground mt-1",
                   note.completed ? "line-through" : ""
                 )}
-              >
-              {note.content.substring(0, 120) + (note.content.length > 120 ? '...' : '')}
-            </div>
+                dangerouslySetInnerHTML={{ __html: note.content.substring(0, 120) + (note.content.length > 120 ? '...' : '') }}
+              />
             <div className="mt-2 flex gap-1 flex-wrap">
                 {note.tags.map(tag => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
