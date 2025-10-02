@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useRef } from 'react';
-import { Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon, Pilcrow } from 'lucide-react';
+import { Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
   value: string;
@@ -17,6 +18,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange 
     document.execCommand(command, false, value);
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
+      editorRef.current.focus();
     }
   };
 
@@ -68,7 +70,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange 
             contentEditable
             onInput={handleInput}
             dangerouslySetInnerHTML={{ __html: value }}
-            className="prose dark:prose-invert max-w-none min-h-[200px] w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className={cn(
+                "prose dark:prose-invert max-w-none min-h-[200px] w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                !value && "text-muted-foreground before:content-['Type_your_note_content_here...'] before:cursor-text"
+            )}
         />
     </div>
   );
