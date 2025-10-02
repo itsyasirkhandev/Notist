@@ -5,23 +5,23 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'Todist: Your Personal Task Manager & To-Do List',
-  description: 'Todist is a simple, intuitive, and powerful to-do list and task manager app. Organize your work and life, set priorities, and achieve your goals with ease. Get started for free!',
-  keywords: 'Todist, to-do list, task manager, productivity app, notes, tasks, organization, getting things done',
+  title: 'Notist: Your Personal Task Manager & To-Do List',
+  description: 'Notist is a simple, intuitive, and powerful to-do list and task manager app. Organize your work and life, set priorities, and achieve your goals with ease. Get started for free!',
+  keywords: 'Notist, to-do list, task manager, productivity app, notes, tasks, organization, getting things done',
   authors: [{ name: 'Yasir Khan', url: 'https://notesbyyasir.netlify.app/' }],
   robots: 'index, follow',
   metadataBase: new URL('https://notesbyyasir.netlify.app/'),
   openGraph: {
-    title: 'Todist: Your Personal Task Manager & To-Do List',
+    title: 'Notist: Your Personal Task Manager & To-Do List',
     description: 'A simple and intuitive to-do list app to help you manage tasks, organize your life, and boost productivity.',
     url: 'https://notesbyyasir.netlify.app/',
-    siteName: 'Todist',
+    siteName: 'Notist',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Todist: Your Personal Task Manager & To-Do List',
+    title: 'Notist: Your Personal Task Manager & To-Do List',
     description: 'A simple and intuitive to-do list app to help you manage tasks, organize your life, and boost productivity.',
   },
 };

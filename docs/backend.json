@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user of the Todist application.",
+      "description": "Represents a user of the Notist application.",
       "properties": {
         "id": {
           "type": "string",
@@ -29,7 +29,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Task",
       "type": "object",
-      "description": "Represents a task in the Todist application.",
+      "description": "Represents a task in the Notist application.",
       "properties": {
         "id": {
           "type": "string",
@@ -112,6 +112,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure secure access and management of tasks within the Todist application. The core principle is Authorization Independence, achieved by structuring data in a way that security rules do not depend on hierarchical `get()` calls, which are detrimental to atomic operations and debugging. Data is structured to facilitate simple and robust security rules based on `request.auth.uid`.\n\nEach user has their own collection of tasks located at `/users/{userId}/tasks/{taskId}`. This design leverages path-based ownership, meaning the user ID is embedded in the document path. This is the most straightforward and secure way to enforce that only the authenticated user can access their tasks. This approach enables simple, robust, and easily debuggable security rules. It enforces that each user can only create, read, update, or delete tasks within their own `tasks` subcollection. This structure supports the application requirements of creating, editing, deleting, and viewing tasks, while ensuring only authenticated users can perform these actions on their own data.\n\nThis structure inherently supports QAPs (Rules are not Filters) because listing the `/users/{userId}/tasks` collection is secure, as rules can be easily scoped to the authenticated user ID without needing to filter data based on user ID after the data is retrieved."
+    "reasoning": "The Firestore structure is designed to ensure secure access and management of tasks within the Notist application. The core principle is Authorization Independence, achieved by structuring data in a way that security rules do not depend on hierarchical `get()` calls, which are detrimental to atomic operations and debugging. Data is structured to facilitate simple and robust security rules based on `request.auth.uid`.\n\nEach user has their own collection of tasks located at `/users/{userId}/tasks/{taskId}`. This design leverages path-based ownership, meaning the user ID is embedded in the document path. This is the most straightforward and secure way to enforce that only the authenticated user can access their tasks. This approach enables simple, robust, and easily debuggable security rules. It enforces that each user can only create, read, update, or delete tasks within their own `tasks` subcollection. This structure supports the application requirements of creating, editing, deleting, and viewing tasks, while ensuring only authenticated users can perform these actions on their own data.\n\nThis structure inherently supports QAPs (Rules are not Filters) because listing the `/users/{userId}/tasks` collection is secure, as rules can be easily scoped to the authenticated user ID without needing to filter data based on user ID after the data is retrieved."
   }
 }

@@ -1,8 +1,8 @@
-# Todist - Your Personal Task Manager
+# Notist - Your Personal Task Manager
 
 **Live URL:** [https://notesbyyasir.netlify.app/](https://notesbyyasir.netlify.app/)
 
-Todist is a modern, intuitive, and feature-rich to-do list and note-taking application designed to help you stay organized and boost your productivity. Built with a powerful tech stack, it offers a seamless and responsive user experience.
+Notist is a modern, intuitive, and feature-rich to-do list and note-taking application designed to help you stay organized and boost your productivity. Built with a powerful tech stack, it offers a seamless and responsive user experience.
 
 ## Core Features
 
@@ -38,11 +38,11 @@ To get a local copy up and running, follow these simple steps.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/todist.git
+    git clone https://github.com/your-username/notist.git
     ```
 2.  **Navigate to the project directory:**
     ```sh
-    cd todist
+    cd notist
     ```
 3.  **Install dependencies:**
     ```sh
@@ -65,7 +65,7 @@ To get a local copy up and running, follow these simple steps.
 
 ## Author
 
-- **Yasir Khan** - *Initial work*
+- **Yasir Khan** - [Portfolio](https://yasir.qzz.io)
 
 ---
 
