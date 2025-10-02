@@ -1,4 +1,3 @@
-import { Auth } from '@/components/Auth';
 import { NoteList } from '@/components/NoteList';
 import { ThemeToggle } from '@/components/theme-toggle';
 
@@ -11,7 +10,6 @@ export default function Home() {
               Notist
             </h1>
             <div className="flex items-center gap-4">
-              <Auth />
               <ThemeToggle />
             </div>
         </div>
