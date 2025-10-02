@@ -94,32 +94,30 @@ export function NoteForm({ noteId }: NoteFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full shadow-lg border-none">
       <form onSubmit={handleSubmit}>
-        <CardHeader>
-          <CardTitle>{noteId ? "Edit Note" : "New Note"}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-4 md:p-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title" className="sr-only">Title</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Note title"
+              placeholder="Note title..."
               required
+              className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-2"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
+            <Label htmlFor="content" className="sr-only">Content</Label>
             <RichTextEditor
               value={content}
               onChange={setContent}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags</Label>
-            <div className="flex items-center gap-2 rounded-md border border-input px-3 py-2">
+            <Label htmlFor="tags" className="sr-only">Tags</Label>
+            <div className="flex items-center gap-2 rounded-md border border-input px-3 py-1">
                 <Tag className="h-4 w-4 text-muted-foreground"/>
                 <div className="flex gap-1 flex-wrap">
                 {tags.map(tag => (
@@ -142,8 +140,8 @@ export function NoteForm({ noteId }: NoteFormProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => router.push('/')}>Cancel</Button>
+        <CardFooter className="flex justify-end gap-2 p-4 md:p-6 pt-0">
+            <Button type="button" variant="ghost" onClick={() => router.push('/')}>Cancel</Button>
             <Button type="submit">
                 <Plus className="h-4 w-4 mr-2" />
                 {noteId ? "Save Changes" : "Add Note"}
