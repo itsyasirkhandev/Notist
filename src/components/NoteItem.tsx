@@ -125,7 +125,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </Link>
       
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pt-1">
+      <div className="flex flex-col sm:flex-row items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pt-1">
         <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onMove(note.id, 'up')} disabled={isFirst} aria-label="Move note up">
