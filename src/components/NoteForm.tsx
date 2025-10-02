@@ -11,7 +11,7 @@ import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { RichTextEditor } from "./RichTextEditor";
-import { useDoc, useFirebase } from "@/firebase";
+import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
 import { doc, serverTimestamp, collection } from "firebase/firestore";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
@@ -27,8 +27,12 @@ export function NoteForm({ noteId }: NoteFormProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   
-  const noteRef = noteId && user ? doc(firestore, `users/${user.uid}/tasks`, noteId) : null;
-  const { data: note, isLoading } = useDoc<Note>(noteId ? noteRef : null);
+  const noteRef = useMemoFirebase(() => {
+    if (!noteId || !user || !firestore) return null;
+    return doc(firestore, `users/${user.uid}/tasks`, noteId);
+  }, [noteId, user, firestore]);
+
+  const { data: note, isLoading } = useDoc<Note>(noteRef);
 
   useEffect(() => {
     if (note) {
