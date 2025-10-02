@@ -154,7 +154,7 @@ export function NoteList() {
 
   return (
     <Card className="w-full shadow-lg">
-      <CardHeader>
+      <CardHeader className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-2">
             <Link href="/notes/new" className="w-full">
                 <Button className="w-full" aria-label="Add Note">
@@ -163,7 +163,7 @@ export function NoteList() {
                 </Button>
             </Link>
         </div>
-        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
