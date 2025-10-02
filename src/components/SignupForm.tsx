@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFirebase } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,12 +40,13 @@ export function SignupForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      await sendEmailVerification(userCredential.user);
       toast({
         title: "Account created!",
-        description: "You have been successfully signed up.",
+        description: "A verification email has been sent. Please check your inbox.",
       });
-      router.push("/");
+      router.push("/"); // Redirect to home, which will show the verification prompt
     } catch (error: any) {
       console.error("Sign up error", error);
       toast({

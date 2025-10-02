@@ -4,7 +4,7 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Info, NotebookPen, Search } from "lucide-react";
+import { Info, NotebookPen, Search, MailWarning } from "lucide-react";
 import React, { useState, useEffect, useMemo } from "react";
 import NoteItem from "./NoteItem";
 import {
@@ -23,17 +23,20 @@ import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
 import { collection, doc, orderBy, query, where } from "firebase/firestore";
+import { sendEmailVerification } from "firebase/auth";
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useToast } from "@/hooks/use-toast";
 
 export function NoteList() {
-  const { user, firestore } = useFirebase();
+  const { user, auth, firestore, isUserLoading } = useFirebase();
+  const { toast } = useToast();
   const [draggedItem, setDraggedItem] = useState<Note | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "completed">("all");
 
   const notesQuery = useMemoFirebase(() => {
-    if (!user) return null;
+    if (!user || !user.emailVerified) return null;
     return query(collection(firestore, `users/${user.uid}/tasks`), orderBy('createdAt', 'desc'));
   }, [user, firestore]);
 
@@ -113,9 +116,38 @@ export function NoteList() {
     setDraggedItem(null);
   };
 
+  const handleResendVerification = async () => {
+    if (!user) return;
+    try {
+        await sendEmailVerification(user);
+        toast({
+            title: "Verification Email Sent",
+            description: "Please check your inbox (and spam folder) for the verification link.",
+        });
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Error Sending Email",
+            description: error.message || "Could not send verification email. Please try again.",
+        });
+    }
+  }
+
   const completedCount = notes?.filter(t => t.completed).length || 0;
 
-  if (!user && !isLoading) {
+  if (isUserLoading) {
+    return (
+      <Card className="w-full shadow-lg">
+          <CardContent>
+              <div className="text-center py-10 text-muted-foreground">
+                  <p>Loading...</p>
+              </div>
+          </CardContent>
+      </Card>
+    )
+  }
+
+  if (!user) {
     return (
         <Card className="w-full shadow-lg">
             <CardContent>
@@ -125,6 +157,25 @@ export function NoteList() {
                 </div>
             </CardContent>
         </Card>
+    )
+  }
+
+  if (user && !user.emailVerified) {
+    return (
+      <Card className="w-full shadow-lg">
+          <CardHeader>
+            <h2 className="text-xl font-semibold text-center">Verify Your Email</h2>
+          </CardHeader>
+          <CardContent>
+              <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-4">
+                  <MailWarning className="h-12 w-12 text-primary"/>
+                  <p className="font-medium text-lg">A verification link has been sent to your email address:</p>
+                  <p className="font-bold text-foreground">{user.email}</p>
+                  <p>Please click the link in the email to continue. You may need to refresh this page after verifying.</p>
+                  <Button onClick={handleResendVerification}>Resend Verification Email</Button>
+              </div>
+          </CardContent>
+      </Card>
     )
   }
 
