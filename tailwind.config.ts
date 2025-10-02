@@ -10,6 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        sans: ['"Oxanium"', 'sans-serif'],
         body: ['"Oxanium"', 'sans-serif'],
         headline: ['"Oxanium"', 'sans-serif'],
         code: ['"Source Code Pro"', 'monospace'],
