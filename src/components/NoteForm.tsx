@@ -3,13 +3,13 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Plus, Tag, X } from "lucide-react";
 import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface NoteFormProps {
     noteId?: string;
@@ -112,12 +112,9 @@ export function NoteForm({ noteId }: NoteFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
+            <RichTextEditor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write your note here..."
-              rows={10}
+              onChange={setContent}
             />
           </div>
           <div className="space-y-2">

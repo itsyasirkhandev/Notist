@@ -53,6 +53,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
   isLast,
 }) => {
   
+  const createMarkup = (htmlContent: string) => {
+    return { __html: htmlContent };
+  }
+
   return (
     <li
       draggable
@@ -99,12 +103,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
             >
               {note.title}
             </span>
-            <p className={cn(
-                "text-sm transition-colors text-muted-foreground mt-1",
-                note.completed ? "line-through" : ""
-              )}>
-                {note.content.substring(0, 120)}{note.content.length > 120 && '...'}
-            </p>
+            <div 
+                className={cn(
+                  "prose prose-sm dark:prose-invert max-w-none text-sm transition-colors text-muted-foreground mt-1",
+                  note.completed ? "line-through" : ""
+                )}
+                dangerouslySetInnerHTML={createMarkup(note.content.substring(0, 120) + (note.content.length > 120 ? '...' : ''))}
+              >
+            </div>
             <div className="mt-2 flex gap-1 flex-wrap">
                 {note.tags.map(tag => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
