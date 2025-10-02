@@ -16,11 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFirebase } from "@/firebase";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
-import { Separator } from "./ui/separator";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -54,20 +53,6 @@ export function LoginForm() {
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description: error.message || "Could not sign in. Please check your credentials.",
-      });
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithRedirect(auth, provider);
-    } catch (error) {
-      console.error("Error during Google sign-in redirect:", error);
-      toast({
-        variant: "destructive",
-        title: "Google Sign-In Failed",
-        description: "Could not sign you in with Google. Please try again.",
       });
     }
   };
@@ -116,13 +101,6 @@ export function LoginForm() {
             </Button>
           </form>
         </Form>
-        <div className="relative my-6">
-            <Separator />
-            <span className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-background px-2 text-sm text-muted-foreground">OR</span>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-            Sign in with Google
-        </Button>
       </CardContent>
     </Card>
   );
