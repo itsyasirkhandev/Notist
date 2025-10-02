@@ -5,7 +5,7 @@ import {
   useUser,
   useAuth,
 } from '@/firebase';
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import { Button } from './ui/button';
 import { LogIn, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -26,7 +26,7 @@ export function Auth() {
     if (!auth) return;
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error('Error signing in with Google', error);
     }
