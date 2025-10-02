@@ -9,7 +9,7 @@ import { Plus, Tag, X } from "lucide-react";
 import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
-import { RichTextEditor } from "./RichTextEditor";
+import { Textarea } from "./ui/textarea";
 
 interface NoteFormProps {
     noteId?: string;
@@ -110,9 +110,12 @@ export function NoteForm({ noteId }: NoteFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="content" className="sr-only">Content</Label>
-            <RichTextEditor
+            <Textarea
+              id="content"
               value={content}
-              onChange={setContent}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Your note..."
+              className="min-h-[250px] text-base"
             />
           </div>
           <div className="space-y-2">
