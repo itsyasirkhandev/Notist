@@ -33,20 +33,9 @@ export function NoteList() {
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "completed">("all");
 
   const notesQuery = useMemoFirebase(() => {
-      if (!user) return null;
-      
-      const baseQuery = collection(firestore, `users/${user.uid}/tasks`);
-      
-      let conditions = [];
-      if (filterStatus !== 'all') {
-          conditions.push(where('completed', '==', filterStatus === 'completed'));
-      }
-      if (filterTag !== 'all') {
-          conditions.push(where('tags', 'array-contains', filterTag));
-      }
-
-      return query(baseQuery, ...conditions, orderBy('createdAt', 'desc'));
-  }, [user, firestore, filterStatus, filterTag]);
+    if (!user) return null;
+    return query(collection(firestore, `users/${user.uid}/tasks`), orderBy('createdAt', 'desc'));
+  }, [user, firestore]);
 
   const { data: notes, isLoading } = useCollection<Note>(notesQuery);
 
@@ -54,12 +43,25 @@ export function NoteList() {
     if (!notes) return [];
     return notes
       .filter(note => {
+        // Status filter
+        if (filterStatus !== 'all') {
+          const isCompleted = filterStatus === 'completed';
+          if (note.completed !== isCompleted) return false;
+        }
+
+        // Tag filter
+        if (filterTag !== 'all') {
+            if (!note.tags || !note.tags.includes(filterTag)) return false;
+        }
+
+        // Search term filter
         const matchesSearch = searchTerm.trim() === "" ||
           note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (note.content && note.content.toLowerCase().includes(searchTerm.toLowerCase()));
+        
         return matchesSearch;
       });
-  }, [notes, searchTerm]);
+  }, [notes, searchTerm, filterStatus, filterTag]);
 
   const allTags = useMemo(() => {
     if (!notes) return [];
@@ -131,7 +133,7 @@ export function NoteList() {
       <CardHeader className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-2">
             <Link href="/notes/new" className="w-full">
-                <Button className="w-full" aria-label="Add Note">
+                <Button className="w-full" aria-label="Add New Note">
                     <NotebookPen className="h-4 w-4 mr-2" />
                     Add New Note
                 </Button>
