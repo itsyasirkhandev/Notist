@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { RichTextEditor } from "./RichTextEditor";
 import { useDoc, useFirebase } from "@/firebase";
-import { doc, serverTimestamp } from "firebase/firestore";
+import { doc, serverTimestamp, collection } from "firebase/firestore";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 interface NoteFormProps {
@@ -69,7 +69,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
         const docRef = doc(firestore, `users/${user.uid}/tasks`, noteId);
         setDocumentNonBlocking(docRef, noteData, { merge: true });
     } else {
-        const collectionRef = doc(firestore, `users/${user.uid}/tasks`);
+        const collectionRef = collection(firestore, `users/${user.uid}/tasks`);
         addDocumentNonBlocking(collectionRef, {
             ...noteData,
             completed: false,
@@ -81,7 +81,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
     router.push("/");
   };
 
-  if (isLoading) {
+  if (noteId && isLoading) {
     return <div>Loading...</div>
   }
 
