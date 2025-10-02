@@ -53,6 +53,16 @@ const NoteItem: React.FC<NoteItemProps> = ({
   isLast,
 }) => {
 
+  const stripHtml = (html: string) => {
+    if (typeof document !== 'undefined') {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || "";
+    }
+    return html.replace(/<[^>]+>/g, '');
+  };
+
+  const truncatedContent = stripHtml(note.content);
+
   return (
     <li
       draggable
@@ -99,13 +109,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
             >
               {note.title}
             </span>
-            <div 
+            <p 
                 className={cn(
-                  "prose prose-sm dark:prose-invert max-w-none text-sm transition-colors text-muted-foreground mt-1",
+                  "text-sm transition-colors text-muted-foreground mt-1",
                   note.completed ? "line-through" : ""
                 )}
-                dangerouslySetInnerHTML={{ __html: note.content.substring(0, 120) + (note.content.length > 120 ? '...' : '') }}
-              />
+              >
+                {truncatedContent.substring(0, 120)}{truncatedContent.length > 120 ? '...' : ''}
+              </p>
             <div className="mt-2 flex gap-1 flex-wrap">
                 {note.tags.map(tag => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
