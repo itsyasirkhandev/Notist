@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFirebase } from "@/firebase";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { GoogleIcon } from "./GoogleIcon";
@@ -42,7 +42,13 @@ export function SignupForm() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+       toast({
+        title: "Account created!",
+        description: `Welcome ${user.displayName || user.email}!`,
+      });
+      router.push("/");
     } catch (error: any) {
       console.error("Google sign-in error", error);
       toast({

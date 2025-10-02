@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useFirebase } from "@/firebase/provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,41 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { GoogleAuthProvider, signInWithRedirect, signOut, getRedirectResult } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 export function Auth() {
   const { auth, user, isUserLoading } = useFirebase();
   const { toast } = useToast();
-  const router = useRouter();
-  
-  useEffect(() => {
-    if (!auth) return;
-
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          // This is the signed-in user
-          const user = result.user;
-          toast({
-            title: "Signed in successfully!",
-            description: `Welcome ${user.displayName || user.email}!`,
-          });
-          router.push('/');
-        }
-      }).catch((error) => {
-        console.error("Error during redirect result:", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.message || "Could not complete sign in.",
-        });
-      });
-  }, [auth, toast, router]);
-
 
   const handleSignOut = async () => {
     try {
