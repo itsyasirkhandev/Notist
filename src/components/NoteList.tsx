@@ -2,10 +2,9 @@
 
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Plus, Info, NotebookPen } from "lucide-react";
-import React, { useState, useEffect, FormEvent, DragEvent } from "react";
+import { Info, NotebookPen } from "lucide-react";
+import React, { useState, useEffect, DragEvent } from "react";
 import NoteItem from "./NoteItem";
 import {
   AlertDialog,
@@ -37,7 +36,12 @@ export function NoteList() {
     try {
       const storedNotes = localStorage.getItem("notes-app-notes");
       if (storedNotes) {
-        setNotes(JSON.parse(storedNotes));
+        const parsedNotes = JSON.parse(storedNotes);
+        if(parsedNotes.length === 0){
+          setNotes(initialNotes);
+        } else {
+          setNotes(parsedNotes);
+        }
       } else {
         setNotes(initialNotes);
       }
@@ -72,12 +76,6 @@ export function NoteList() {
   const handleClearCompleted = () => {
     setNotes(notes.filter((note) => !note.completed));
   }
-
-  const handleUpdateNote = (id: string, newTitle: string, newContent: string, newTags: string[]) => {
-    setNotes(
-      notes.map((note) => (note.id === id ? { ...note, title: newTitle, content: newContent, tags: newTags } : note))
-    );
-  };
   
   const handleMove = (id: string, direction: 'up' | 'down') => {
     const index = notes.findIndex(note => note.id === id);

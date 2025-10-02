@@ -105,7 +105,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
               )}>
                 {note.content.substring(0, 100)}{note.content.length > 100 && '...'}
             </p>
-            <div className="mt-2 flex gap-1">
+            <div className="mt-2 flex gap-1 flex-wrap">
                 {note.tags.map(tag => (
                     <Badge key={tag} variant="secondary">{tag}</Badge>
                 ))}

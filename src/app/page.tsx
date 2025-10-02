@@ -1,4 +1,4 @@
-import { TodoList } from '@/components/TodoList';
+import { NoteList } from '@/components/NoteList';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Home() {
@@ -10,17 +10,17 @@ export default function Home() {
         </div>
         <header className="text-center mb-10">
           <h1 className="text-5xl font-bold tracking-tight text-foreground">
-            Todist
+            Notes
           </h1>
           <p className="text-lg text-muted-foreground mt-2">
-            Organize Your Day, Achieve Your Goals.
+            Organize Your Thoughts, Capture Your Ideas.
           </p>
         </header>
         <main>
-          <TodoList />
+          <NoteList />
         </main>
         <footer className="text-center mt-12 text-sm text-muted-foreground">
-          <p>Tip: You can drag and drop tasks to reorder them.</p>
+          <p>Tip: You can drag and drop notes to reorder them.</p>
         </footer>
       </div>
     </div>

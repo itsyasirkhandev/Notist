@@ -1,5 +1,8 @@
-export interface Task {
+export interface Note {
   id: string;
-  text: string;
+  title: string;
+  content: string;
+  tags: string[];
   completed: boolean;
+  createdAt: string;
 }
