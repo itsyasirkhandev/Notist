@@ -1,6 +1,6 @@
-# Notist - Your Personal Task Manager
+# Notist - Your Personal Note-Taking App
 
-**A modern, intuitive, and feature-rich to-do list and note-taking application designed to help you stay organized and boost your productivity.**
+**A modern, intuitive, and feature-rich note-taking application designed to help you stay organized and capture your thoughts.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge)](https://notesbyyasir.netlify.app/)
 
@@ -19,14 +19,13 @@
 
 ## About The Project
 
-Notist is a powerful and seamless to-do list and note-taking app built with a modern tech stack. It provides a fluid user experience with real-time data synchronization, secure authentication, and a rich text editor. Whether you're managing daily tasks or organizing complex projects, Notist is designed to help you capture your thoughts and stay productive.
+Notist is a powerful and seamless note-taking app built with a modern tech stack. It provides a fluid user experience with real-time data synchronization, secure authentication, and a rich text editor. Whether you're managing daily thoughts or organizing complex projects, Notist is designed to help you capture your ideas and stay productive.
 
 ## Key Features
 
-- **Task & Note Management**: Easily create, edit, and delete notes and tasks.
+- **Note Management**: Easily create, edit, and delete your notes.
 - **Rich Text Editing**: A full-featured WYSIWYG editor allows you to format your notes with headings, bold, italics, lists, and more.
-- **Task Status**: Mark tasks as complete or active to keep track of your progress.
-- **Tagging & Filtering**: Organize your notes with custom tags and quickly filter them by tag, status, or search term.
+- **Tagging & Filtering**: Organize your notes with custom tags and quickly filter them by tag or search term.
 - **Drag and Drop**: Intuitively reorder your notes with a smooth drag-and-drop interface.
 - **Secure Authentication**: Sign in securely with your Google account or by Email/Password, powered by Firebase Authentication.
 - **Real-time Data Sync**: Your notes are saved and synced in real-time across all your devices using Firestore.
@@ -38,7 +37,7 @@ Notist is a powerful and seamless to-do list and note-taking app built with a mo
 <p align="left">
   <img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next JS" />
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
-  <img src="https://imgshields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
   <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Netlify" />
