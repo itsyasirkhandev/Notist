@@ -144,6 +144,8 @@ export function NoteList() {
       </Card>
     )
   }
+  
+  const hasFiltersApplied = searchTerm.trim() !== "" || filterTag !== "all";
 
   return (
     <Card className="w-full shadow-lg">
@@ -208,8 +210,17 @@ export function NoteList() {
           !isLoading && (
             <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
               <Info className="h-6 w-6"/>
-              <p className="font-medium">No notes match your filters!</p>
-              <p className="text-sm">Try a different search or filter.</p>
+              {hasFiltersApplied ? (
+                <>
+                  <p className="font-medium">No notes match your filters!</p>
+                  <p className="text-sm">Try a different search or filter.</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-medium">No notes yet!</p>
+                  <p className="text-sm">Click "Add New Note" to get started.</p>
+                </>
+              )}
             </div>
           )
         )}
