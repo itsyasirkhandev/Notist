@@ -21,7 +21,6 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { GoogleIcon } from "./GoogleIcon";
 import { Separator } from "./ui/separator";
 
 const formSchema = z.object({
@@ -48,31 +47,6 @@ export function SignupForm({ setView }: SignupFormProps) {
     },
   });
 
-  const handleGoogleSignIn = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      toast({
-        title: "Account created successfully!",
-        description: "Welcome!",
-      });
-      router.push("/");
-    } catch (error: any) {
-       if (error.code !== 'auth/popup-closed-by-user') {
-        console.error("Google sign up error", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: error.message || "Could not create account with Google. Please try again.",
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -97,7 +71,7 @@ export function SignupForm({ setView }: SignupFormProps) {
   };
 
   return (
-    <Card className="w-full shadow-lg border-none">
+    <Card className="w-full shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl text-center">Create an account</CardTitle>
       </CardHeader>
@@ -146,14 +120,7 @@ export function SignupForm({ setView }: SignupFormProps) {
             </Button>
           </form>
         </Form>
-        <div className="relative my-4">
-            <Separator className="absolute top-1/2 -translate-y-1/2"/>
-            <p className="relative text-center bg-background px-2 text-sm text-muted-foreground w-fit mx-auto">OR</p>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
-          <GoogleIcon className="mr-2 h-4 w-4" />
-          Continue with Google
-        </Button>
+        
         <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Button variant="link" className="px-0" onClick={() => setView('login')}>
