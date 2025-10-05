@@ -74,9 +74,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Architects Daughter", "sans-serif"],
-        serif: ["var(--font-serif)", "Times New Roman", "serif"],
-        mono: ["var(--font-mono)", "Courier New", "monospace"],
+        sans: ["Architects Daughter", "sans-serif"],
+        serif: ["var(--font-serif)"],
+        mono: ["var(--font-mono)"],
       },
       boxShadow: {
         '2xs': 'var(--shadow-2xs)',
