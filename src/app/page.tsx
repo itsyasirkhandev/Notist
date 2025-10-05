@@ -2,6 +2,7 @@
 'use client';
 
 import { Auth } from '@/components/Auth';
+import { Loader } from '@/components/Loader';
 import { NoteList } from '@/components/NoteList';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
@@ -18,13 +19,16 @@ export default function Home() {
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user) {
-    // You can render a loading spinner here
+  if (isUserLoading) {
     return (
-        <div className="flex items-center justify-center min-h-screen">
-            <p>Loading...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
+      </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
 

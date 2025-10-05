@@ -15,6 +15,7 @@ import { collection, doc, orderBy, query } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
 import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
+import { Loader } from "./Loader";
 
 export function NoteList() {
   const { user, auth, firestore, isUserLoading } = useFirebase();
@@ -105,7 +106,7 @@ export function NoteList() {
       <Card className="w-full shadow-lg">
           <CardContent>
               <div className="text-center py-10 text-muted-foreground">
-                  <p>Loading...</p>
+                  <Loader />
               </div>
           </CardContent>
       </Card>
@@ -181,7 +182,11 @@ export function NoteList() {
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading && <p>Loading notes...</p>}
+        {isLoading && (
+          <div className="text-center py-10">
+            <Loader />
+          </div>
+        )}
         {!isLoading && filteredNotes.length > 0 ? (
           <ul className="gap-4 md:columns-2 lg:columns-3 xl:columns-4">
             {filteredNotes.map((note, index) => (
