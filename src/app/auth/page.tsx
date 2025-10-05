@@ -27,7 +27,7 @@ export default function AuthPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-background font-body selection:bg-primary/20 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold tracking-tight text-primary">Notist</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-primary font-sans">Notist</h1>
           <p className="text-muted-foreground">
             {view === 'login' && 'Welcome back! Please sign in to your account.'}
             {view === 'signup' && 'Create an account to start organizing your life.'}
@@ -39,4 +39,3 @@ export default function AuthPage() {
     </div>
   );
 }
-

@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { GoogleIcon } from "./GoogleIcon";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -70,8 +71,31 @@ export function SignupForm({ setView }: SignupFormProps) {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const provider = new GoogleAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+        toast({
+            title: "Signed in with Google!",
+            description: "Welcome to your dashboard.",
+        });
+        router.push('/');
+    } catch (error: any) {
+        console.error("Google sign in error", error);
+        toast({
+            variant: "destructive",
+            title: "Google Sign-In Failed",
+            description: error.message || "An unexpected error occurred during Google sign-in.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full shadow-lg border-none">
       <CardHeader>
         <CardTitle className="text-2xl text-center">Create an account</CardTitle>
       </CardHeader>
@@ -121,6 +145,15 @@ export function SignupForm({ setView }: SignupFormProps) {
           </form>
         </Form>
         
+        <div className="relative my-4">
+            <Separator />
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">OR CONTINUE WITH</span>
+        </div>
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
+            <GoogleIcon className="mr-2 h-5 w-5" />
+            Continue with Google
+        </Button>
+
         <p className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Button variant="link" className="px-0" onClick={() => setView('login')}>
