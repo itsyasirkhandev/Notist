@@ -14,13 +14,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { signOut } from "firebase/auth";
-import { LogIn } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export function Auth() {
   const { auth, user, isUserLoading } = useFirebase();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleSignOut = async () => {
     try {
@@ -29,6 +31,7 @@ export function Auth() {
         title: "Signed out",
         description: "You have been successfully signed out.",
       });
+      router.push('/auth');
     } catch (error: any) {
       console.error("Error signing out:", error);
        toast({
@@ -62,7 +65,7 @@ export function Auth() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {user.displayName}
+                {user.displayName || "User"}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
@@ -71,6 +74,7 @@ export function Auth() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -80,7 +84,7 @@ export function Auth() {
   
   return (
     <Button asChild>
-      <Link href="/login">
+      <Link href="/auth">
         <LogIn className="mr-2 h-4 w-4" />
         Login
       </Link>

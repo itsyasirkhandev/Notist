@@ -1,9 +1,33 @@
 
+'use client';
+
 import { Auth } from '@/components/Auth';
 import { NoteList } from '@/components/NoteList';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/auth');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    // You can render a loading spinner here
+    return (
+        <div className="flex items-center justify-center min-h-screen">
+            <p>Loading...</p>
+        </div>
+    );
+  }
+
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-background font-body selection:bg-primary/20">
       <div className='w-full bg-primary text-primary-foreground border-b-4 border-border'>

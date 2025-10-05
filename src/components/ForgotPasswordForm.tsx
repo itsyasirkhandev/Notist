@@ -18,14 +18,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useFirebase } from "@/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
 });
 
-export function ForgotPasswordForm() {
+interface ForgotPasswordFormProps {
+  setView: (view: 'login' | 'signup' | 'forgot-password') => void;
+}
+
+export function ForgotPasswordForm({ setView }: ForgotPasswordFormProps) {
   const { auth } = useFirebase();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,6 +41,8 @@ export function ForgotPasswordForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       await sendPasswordResetEmail(auth, values.email);
       toast({
@@ -42,6 +50,7 @@ export function ForgotPasswordForm() {
         description: "Check your inbox for a link to reset your password.",
       });
       form.reset();
+      setView('login');
     } catch (error: any) {
       console.error("Password reset error", error);
       toast({
@@ -49,6 +58,8 @@ export function ForgotPasswordForm() {
         title: "Uh oh! Something went wrong.",
         description: error.message || "Could not send password reset email. Please try again.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -70,17 +81,23 @@ export function ForgotPasswordForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="name@example.com" {...field} disabled={isSubmitting} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Send Reset Link
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending Link...' : 'Send Reset Link'}
             </Button>
           </form>
         </Form>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+            Remember your password?{" "}
+            <Button variant="link" className="px-0" onClick={() => setView('login')}>
+                Log in
+            </Button>
+        </p>
       </CardContent>
     </Card>
   );

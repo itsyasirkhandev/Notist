@@ -16,22 +16,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFirebase } from "@/firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleIcon } from "./GoogleIcon";
+import { Separator } from "./ui/separator";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
 
-export function SignupForm() {
+interface SignupFormProps {
+  setView: (view: 'login' | 'signup' | 'forgot-password') => void;
+}
+
+export function SignupForm({ setView }: SignupFormProps) {
   const router = useRouter();
   const { auth } = useFirebase();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,7 +48,34 @@ export function SignupForm() {
     },
   });
 
+  const handleGoogleSignIn = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      toast({
+        title: "Account created successfully!",
+        description: "Welcome!",
+      });
+      router.push("/");
+    } catch (error: any) {
+       if (error.code !== 'auth/popup-closed-by-user') {
+        console.error("Google sign up error", error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.message || "Could not create account with Google. Please try again.",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       await sendEmailVerification(userCredential.user);
@@ -49,7 +83,7 @@ export function SignupForm() {
         title: "Account created!",
         description: "A verification email has been sent. Please check your inbox.",
       });
-      router.push("/"); // Redirect to home, which will show the verification prompt
+      router.push("/");
     } catch (error: any) {
       console.error("Sign up error", error);
       toast({
@@ -57,6 +91,8 @@ export function SignupForm() {
         title: "Uh oh! Something went wrong.",
         description: error.message || "Could not create account. Please try again.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -75,7 +111,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="name@example.com" {...field} disabled={isSubmitting}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,7 +125,7 @@ export function SignupForm() {
                   <FormLabel>Password</FormLabel>
                   <div className="relative">
                     <FormControl>
-                      <Input type={showPassword ? "text" : "password"} placeholder="••••••••" {...field} />
+                      <Input type={showPassword ? "text" : "password"} placeholder="••••••••" {...field} disabled={isSubmitting}/>
                     </FormControl>
                     <Button 
                       type="button"
@@ -105,11 +141,25 @@ export function SignupForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Create Account
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>
+        <div className="relative my-4">
+            <Separator className="absolute top-1/2 -translate-y-1/2"/>
+            <p className="relative text-center bg-background px-2 text-sm text-muted-foreground w-fit mx-auto">OR</p>
+        </div>
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isSubmitting}>
+          <GoogleIcon className="mr-2 h-4 w-4" />
+          Continue with Google
+        </Button>
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Button variant="link" className="px-0" onClick={() => setView('login')}>
+                Log in
+            </Button>
+        </p>
       </CardContent>
     </Card>
   );
