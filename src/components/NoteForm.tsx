@@ -14,6 +14,7 @@ import { RichTextEditor } from "./RichTextEditor";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
 import { doc, serverTimestamp, collection } from "firebase/firestore";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { Loader } from "./Loader";
 
 interface NoteFormProps {
     noteId?: string;
@@ -85,14 +86,14 @@ export function NoteForm({ noteId }: NoteFormProps) {
   };
 
   if (noteId && isLoading) {
-    return <div>Loading...</div>
+    return <div className="flex items-center justify-center min-h-[400px]"><Loader /></div>
   }
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4 p-4 md:p-6">
-          <div className="space-y-2">
+          <div className="space-y-2 py-1">
             <Label htmlFor="title" className="sr-only">Title</Label>
             <Input
               id="title"
@@ -100,7 +101,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
               required
-              className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-2"
+              className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-2 h-auto"
             />
           </div>
           <RichTextEditor value={content} onChange={setContent} />
