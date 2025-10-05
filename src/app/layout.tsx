@@ -4,25 +4,32 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/theme-provider';
 import { FirebaseClientProvider } from '@/firebase';
 
+const appUrl = 'https://notesbyyasir.netlify.app/';
+
 export const metadata: Metadata = {
-  title: 'Notist: Your Personal Task Manager & To-Do List',
-  description: 'Notist is a simple, intuitive, and powerful to-do list and task manager app. Organize your work and life, set priorities, and achieve your goals with ease. Get started for free!',
+  title: 'Notist [2025]: The #1 Task Manager & To-Do List App',
+  description: 'Boost your productivity with Notist. A simple, powerful, and intuitive to-do list and task manager app to help you organize your work and life. Get started for free!',
   keywords: 'Notist, to-do list, task manager, productivity app, notes, tasks, organization, getting things done',
   authors: [{ name: 'Yasir Khan', url: 'https://notesbyyasir.netlify.app/' }],
   robots: 'index, follow',
-  metadataBase: new URL('https://notesbyyasir.netlify.app/'),
+  metadataBase: new URL(appUrl),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Notist: Your Personal Task Manager & To-Do List',
+    title: 'Notist [2025]: The #1 Task Manager & To-Do List App',
     description: 'A simple and intuitive to-do list app to help you manage tasks, organize your life, and boost productivity.',
-    url: 'https://notesbyyasir.netlify.app/',
+    url: appUrl,
     siteName: 'Notist',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Notist: Your Personal Task Manager & To-Do List',
+    title: 'Notist [2025]: The #1 Task Manager & To-Do List App',
     description: 'A simple and intuitive to-do list app to help you manage tasks, organize your life, and boost productivity.',
+    creator: '@yourtwitterhandle', // Replace with actual creator handle
+    site: '@yourtwitterhandle', // Replace with actual site handle
   },
 };
 
