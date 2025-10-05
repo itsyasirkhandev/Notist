@@ -69,7 +69,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
       onDragEnd={onDragEnd}
       onDragOver={(e) => e.preventDefault()}
       className={cn(
-        "group flex items-start gap-2 rounded-lg border bg-card p-3 transition-shadow hover:shadow-md",
+        "group flex items-start gap-2 rounded-lg border bg-card p-3 transition-shadow hover:shadow-md break-inside-avoid-column mb-4",
         isDragged && "opacity-50 shadow-xl scale-105",
         "focus-within:ring-2 focus-within:ring-ring"
       )}

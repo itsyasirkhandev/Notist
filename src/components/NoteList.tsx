@@ -183,7 +183,7 @@ export function NoteList() {
       <CardContent>
         {isLoading && <p>Loading notes...</p>}
         {!isLoading && filteredNotes.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className="gap-4 md:columns-2 lg:columns-3 xl:columns-4">
             {filteredNotes.map((note, index) => (
               <NoteItem
                 key={note.id}
