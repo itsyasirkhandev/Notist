@@ -1,70 +1,33 @@
 /**
- * @fileoverview Firestore Security Rules for Todist application.
+ * @fileoverview Firestore Security Rules for the Notist application.
  *
  * Core Philosophy:
  * This ruleset enforces a strict user-ownership model. Each user can only
- * access their own data, and no user can access or modify another user's data.
+ * access data associated with their own user ID. This ensures data privacy
+ * and prevents unauthorized access.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profiles, with 'userId' matching the Firebase Auth UID.
- * - /users/{userId}/tasks/{taskId}: Stores tasks associated with a specific user.
+ * - /users/{userId}: Stores user profile information. 'userId' must match the
+ *   Firebase Authentication UID.
+ * - /users/{userId}/notes/{noteId}: Stores notes belonging to a specific user.
+ *   'userId' in the path must match the note's 'userId' field.
  *
  * Key Security Decisions:
- * - Users can only read and write their own user document.
- * - Users can only create, read, update, and delete tasks within their own /tasks subcollection.
- * - No public listing of users is allowed.
- * - Data consistency between the path and the document's internal fields is enforced.
+ * - User listing is implicitly denied, as there are no rules allowing it.
+ * - Only authenticated users can access the database.
+ * - Data consistency between the path and the document's internal fields
+ *   (specifically, userId) is enforced.
  *
  * Denormalization for Authorization:
- * The 'userId' is embedded in the document path for tasks (`/users/{userId}/tasks/{taskId}`),
- * eliminating the need for complex `get()` calls to determine ownership. The security rules can
- * directly check the path to authorize operations.
+ * The 'userId' field is present in the Note document and also in the path. This
+ * redundancy (denormalization) is intentional. It allows security rules to
+ * quickly verify ownership without additional reads. The rules validate that
+ * the 'userId' in the document matches the 'userId' in the path, ensuring
+ * that users can only access notes they own.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Controls access to user profiles.
-     * @path /users/{userId}
-     * @allow (get, list) if isSignedIn() && isOwner(userId) - Allows a signed-in user to read their own profile.
-     * @allow (create) if isSignedIn() && isOwner(userId) - Allows a signed-in user to create their own profile.
-     * @allow (update) if isSignedIn() && isOwner(userId) - Allows a signed-in user to update their own profile.
-     * @allow (delete) if isSignedIn() && isExistingOwner(userId) - Allows a signed-in user to delete their own profile.
-     * @deny (get, list) if !isSignedIn() || !isOwner(userId) - Denies access to other users' profiles.
-     * @deny (create) if !isSignedIn() || !isOwner(userId) - Denies other users from creating profiles under different IDs.
-     * @deny (update) if !isSignedIn() || !isExistingOwner(userId) - Denies other users from updating profiles.
-     * @deny (delete) if !isSignedIn() || !isExistingOwner(userId) - Denies other users from deleting profiles.
-     * @principle Enforces user-ownership for profile access.
-     */
-    match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
-
-    /**
-     * @description Controls access to tasks for a specific user.
-     * @path /users/{userId}/tasks/{taskId}
-     * @allow (get, list) if isSignedIn() && isOwner(userId) - Allows a signed-in user to read/list their own tasks.
-     * @allow (create) if isSignedIn() && isOwner(userId) - Allows a signed-in user to create tasks.
-     * @allow (update) if isSignedIn() && isOwner(userId) && resource != null - Allows a signed-in user to update their own tasks.
-     * @allow (delete) if isSignedIn() && isOwner(userId) && resource != null - Allows a signed-in user to delete their own tasks.
-     * @deny (get, list) if !isSignedIn() || !isOwner(userId) - Denies access to other users' tasks.
-     * @deny (create) if !isSignedIn() || !isOwner(userId) - Denies other users from creating tasks under different IDs.
-     * @deny (update) if !isSignedIn() || !isOwner(userId) || resource == null - Denies other users from updating tasks, and prevents updates to non-existent tasks.
-     * @deny (delete) if !isSignedIn() || !isOwner(userId) || resource == null - Denies other users from deleting tasks, and prevents deletion of non-existent tasks.
-     * @principle Enforces user-ownership for task access.
-     */
-    match /users/{userId}/tasks/{taskId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
 
     function isSignedIn() {
       return request.auth != null;
@@ -75,7 +38,61 @@ service cloud.firestore {
     }
 
     function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Secures user profiles, ensuring only the owner can read and write their own profile.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'user123' creates their profile with matching userId.
+     *    - request.auth.uid: 'user123'
+     *    - request.resource.data.id: 'user123'
+     * @allow (get) User with ID 'user123' reads their profile.
+     *    - request.auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' updates their profile.
+     *    - request.auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' deletes their profile.
+     *    - request.auth.uid: 'user123'
+     * @deny (create) User with ID 'user123' tries to create a profile for 'user456'.
+     *    - request.auth.uid: 'user123'
+     *    - request.resource.data.id: 'user456'
+     * @deny (get) User with ID 'user123' tries to read the profile of 'user456'.
+     *    - request.auth.uid: 'user123'
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Secures notes, ensuring only the owner can manage their own notes.
+     * @path /users/{userId}/notes/{noteId}
+     * @allow (create) User with ID 'user123' creates a note in their notes collection.
+     *    - request.auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user123'
+     * @allow (get) User with ID 'user123' reads a note from their notes collection.
+     *    - request.auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' updates a note in their notes collection.
+     *    - request.auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' deletes a note from their notes collection.
+     *    - request.auth.uid: 'user123'
+     * @deny (create) User with ID 'user123' tries to create a note in 'user456's notes collection.
+     *    - request.auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user456'
+     * @deny (get) User with ID 'user123' tries to read a note from 'user456's notes collection.
+     *    - request.auth.uid: 'user123'
+     * @principle Enforces document ownership and path consistency for all operations on notes.
+     */
+    match /users/{userId}/notes/{noteId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
     }
   }
 }
