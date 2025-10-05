@@ -5,9 +5,6 @@ import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Trash2,
-  GripVertical,
-  ArrowUp,
-  ArrowDown,
   Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,26 +26,12 @@ import { Badge } from "./ui/badge";
 
 interface NoteItemProps {
   note: Note;
-  isDragged: boolean;
   onDelete: (id: string) => void;
-  onMove: (id: string, direction: 'up' | 'down') => void;
-  onDragStart: (note: Note) => void;
-  onDragEnter: (note: Note) => void;
-  onDragEnd: () => void;
-  isFirst: boolean;
-  isLast: boolean;
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
   note,
-  isDragged,
   onDelete,
-  onMove,
-  onDragStart,
-  onDragEnter,
-  onDragEnd,
-  isFirst,
-  isLast,
 }) => {
 
   const stripHtml = (html: string) => {
@@ -63,34 +46,16 @@ const NoteItem: React.FC<NoteItemProps> = ({
 
   return (
     <li
-      draggable
-      onDragStart={() => onDragStart(note)}
-      onDragEnter={() => onDragEnter(note)}
-      onDragEnd={onDragEnd}
-      onDragOver={(e) => e.preventDefault()}
       className={cn(
-        "group flex items-start gap-2 rounded-lg border bg-card p-3 transition-shadow hover:shadow-md break-inside-avoid-column mb-4",
-        isDragged && "opacity-50 shadow-xl scale-105",
+        "group flex flex-col items-start gap-2 rounded-lg border bg-card p-4 transition-all hover:shadow-md break-inside-avoid-column mb-4 relative",
         "focus-within:ring-2 focus-within:ring-ring"
       )}
-      aria-roledescription="Draggable note item"
+      aria-roledescription="Note item"
     >
       <TooltipProvider>
-      <div className="flex items-center gap-2 pt-1">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button className="p-1 cursor-grab focus:cursor-grabbing active:cursor-grabbing focus:outline-none focus:ring-1 focus:ring-ring rounded-sm" aria-label="Drag to reorder">
-              <GripVertical className="h-5 w-5 text-muted-foreground" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Drag to reorder</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-
-      <Link href={`/notes/${note.id}`} className="flex-grow">
-        <div className="flex-grow cursor-pointer">
+      
+      <Link href={`/notes/${note.id}`} className="flex-grow w-full">
+        <div className="flex-grow cursor-pointer pr-16">
             <span
               id={`note-label-${note.id}`}
               className={cn(
@@ -115,23 +80,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         </div>
       </Link>
       
-      <div className="flex flex-col sm:flex-row items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity pt-1">
-        <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onMove(note.id, 'up')} disabled={isFirst} aria-label="Move note up">
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent><p>Move up</p></TooltipContent>
-        </Tooltip>
-        <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onMove(note.id, 'down')} disabled={isLast} aria-label="Move note down">
-                <ArrowDown className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent><p>Move down</p></TooltipContent>
-        </Tooltip>
+      <div className="absolute top-2 right-2 flex flex-col sm:flex-row items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
         <Tooltip>
             <TooltipTrigger asChild>
                 <Link href={`/notes/${note.id}`}>

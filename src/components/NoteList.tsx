@@ -20,7 +20,6 @@ import { Loader } from "./Loader";
 export function NoteList() {
   const { user, auth, firestore, isUserLoading } = useFirebase();
   const { toast } = useToast();
-  const [draggedItem, setDraggedItem] = useState<Note | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState<string>("all");
 
@@ -63,27 +62,6 @@ export function NoteList() {
     deleteDocumentNonBlocking(docRef);
   };
   
-  const handleMove = (id: string, direction: 'up' | 'down') => {
-    // Note: Reordering is complex with Firestore queries.
-    // A simple implementation would require a dedicated 'order' field.
-    // For now, this is a placeholder.
-    console.log("Moving not yet implemented with Firestore backend");
-  }
-
-  const handleDragStart = (note: Note) => {
-    setDraggedItem(note);
-  };
-
-  const handleDragEnter = (targetNote: Note) => {
-     // Note: Reordering is complex with Firestore queries.
-    if (!draggedItem || draggedItem.id === targetNote.id) return;
-    console.log("Dragging not yet implemented with Firestore backend");
-  };
-
-  const handleDragEnd = () => {
-    setDraggedItem(null);
-  };
-
   const handleResendVerification = async () => {
     if (!user) return;
     try {
@@ -191,18 +169,11 @@ export function NoteList() {
         )}
         {!isLoading && filteredNotes.length > 0 ? (
           <ul className="gap-4 md:columns-2 lg:columns-3 xl:columns-4">
-            {filteredNotes.map((note, index) => (
+            {filteredNotes.map((note) => (
               <NoteItem
                 key={note.id}
                 note={note}
-                isDragged={draggedItem?.id === note.id}
                 onDelete={handleDeleteNote}
-                onMove={handleMove}
-                onDragStart={handleDragStart}
-                onDragEnter={handleDragEnter}
-                onDragEnd={handleDragEnd}
-                isFirst={index === 0}
-                isLast={index === filteredNotes.length - 1}
               />
             ))}
           </ul>

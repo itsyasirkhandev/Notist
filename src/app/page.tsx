@@ -50,7 +50,7 @@ export default function Home() {
           <NoteList />
         </main>
         <footer className="text-center mt-12 text-sm text-muted-foreground">
-          <p>Tip: You can drag and drop notes to reorder them.</p>
+          <p>Organize your thoughts, one note at a time.</p>
         </footer>
       </div>
     </div>
