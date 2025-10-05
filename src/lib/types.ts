@@ -6,7 +6,6 @@ export interface Note {
   title: string;
   content: string;
   tags: string[];
-  completed: boolean;
   createdAt: Timestamp;
   updatedAt?: Timestamp;
   userId?: string;

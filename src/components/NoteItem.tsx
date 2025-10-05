@@ -3,7 +3,6 @@
 
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Trash2,
   GripVertical,
@@ -31,7 +30,6 @@ import { Badge } from "./ui/badge";
 interface NoteItemProps {
   note: Note;
   isDragged: boolean;
-  onToggleComplete: (id: string, completed: boolean) => void;
   onDelete: (id: string) => void;
   onMove: (id: string, direction: 'up' | 'down') => void;
   onDragStart: (note: Note) => void;
@@ -44,7 +42,6 @@ interface NoteItemProps {
 const NoteItem: React.FC<NoteItemProps> = ({
   note,
   isDragged,
-  onToggleComplete,
   onDelete,
   onMove,
   onDragStart,
@@ -90,13 +87,6 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <p>Drag to reorder</p>
           </TooltipContent>
         </Tooltip>
-
-        <Checkbox
-          id={`note-${note.id}`}
-          checked={note.completed}
-          onCheckedChange={(checked) => onToggleComplete(note.id, !!checked)}
-          aria-labelledby={`note-label-${note.id}`}
-        />
       </div>
 
       <Link href={`/notes/${note.id}`} className="flex-grow">
@@ -105,15 +95,14 @@ const NoteItem: React.FC<NoteItemProps> = ({
               id={`note-label-${note.id}`}
               className={cn(
                 "font-medium text-base transition-colors",
-                note.completed ? "text-muted-foreground line-through" : "text-foreground"
+                "text-foreground"
               )}
             >
               {note.title}
             </span>
             <p 
                 className={cn(
-                  "text-sm transition-colors text-muted-foreground mt-1",
-                  note.completed ? "line-through" : ""
+                  "text-sm transition-colors text-muted-foreground mt-1"
                 )}
               >
                 {truncatedContent.substring(0, 120)}{truncatedContent.length > 120 ? '...' : ''}

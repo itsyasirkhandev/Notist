@@ -4,7 +4,7 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Plus, Tag, X } from "lucide-react";
 import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
@@ -29,7 +29,7 @@ export function NoteForm({ noteId }: NoteFormProps) {
   
   const noteRef = useMemoFirebase(() => {
     if (!noteId || !user || !firestore) return null;
-    return doc(firestore, `users/${user.uid}/tasks`, noteId);
+    return doc(firestore, `users/${user.uid}/notes`, noteId);
   }, [noteId, user, firestore]);
 
   const { data: note, isLoading } = useDoc<Note>(noteRef);
@@ -70,13 +70,12 @@ export function NoteForm({ noteId }: NoteFormProps) {
     };
     
     if (noteId) {
-        const docRef = doc(firestore, `users/${user.uid}/tasks`, noteId);
+        const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
         setDocumentNonBlocking(docRef, noteData, { merge: true });
     } else {
-        const collectionRef = collection(firestore, `users/${user.uid}/tasks`);
+        const collectionRef = collection(firestore, `users/${user.uid}/notes`);
         addDocumentNonBlocking(collectionRef, {
             ...noteData,
-            completed: false,
             createdAt: serverTimestamp(),
             userId: user.uid,
         });

@@ -25,44 +25,51 @@
         "email"
       ]
     },
-    "Task": {
+    "Note": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Task",
+      "title": "Note",
       "type": "object",
-      "description": "Represents a task in the Notist application.",
+      "description": "Represents a note in the Notist application.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Task entity."
+          "description": "Unique identifier for the Note entity."
         },
         "userId": {
           "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Task)"
+          "description": "Reference to User. (Relationship: User 1:N Note)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the note."
         },
         "content": {
           "type": "string",
-          "description": "The content of the task."
+          "description": "The content of the note."
         },
-        "status": {
-          "type": "string",
-          "description": "The status of the task. (e.g., 'To Do', 'In Progress', 'Completed')"
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the note."
         },
         "createdAt": {
           "type": "string",
-          "description": "The date and time the task was created.",
+          "description": "The date and time the note was created.",
           "format": "date-time"
         },
         "updatedAt": {
           "type": "string",
-          "description": "The date and time the task was last updated.",
+          "description": "The date and time the note was last updated.",
           "format": "date-time"
         }
       },
       "required": [
         "id",
         "userId",
+        "title",
         "content",
-        "status",
         "createdAt",
         "updatedAt"
       ]
@@ -93,26 +100,26 @@
         }
       },
       {
-        "path": "/users/{userId}/tasks/{taskId}",
+        "path": "/users/{userId}/notes/{noteId}",
         "definition": {
-          "entityName": "Task",
+          "entityName": "Note",
           "schema": {
-            "$ref": "#/backend/entities/Task"
+            "$ref": "#/backend/entities/Note"
           },
-          "description": "Stores tasks associated with a specific user. The 'userId' parameter ensures data ownership and access control.",
+          "description": "Stores notes associated with a specific user. The 'userId' parameter ensures data ownership and access control.",
           "params": [
             {
               "name": "userId",
               "description": "The unique identifier for the user, matching the Firebase Auth UID."
             },
             {
-              "name": "taskId",
-              "description": "The unique identifier for the task."
+              "name": "noteId",
+              "description": "The unique identifier for the note."
             }
           ]
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure secure access and management of tasks within the Notist application. The core principle is Authorization Independence, achieved by structuring data in a way that security rules do not depend on hierarchical `get()` calls, which are detrimental to atomic operations and debugging. Data is structured to facilitate simple and robust security rules based on `request.auth.uid`.\n\nEach user has their own collection of tasks located at `/users/{userId}/tasks/{taskId}`. This design leverages path-based ownership, meaning the user ID is embedded in the document path. This is the most straightforward and secure way to enforce that only the authenticated user can access their tasks. This approach enables simple, robust, and easily debuggable security rules. It enforces that each user can only create, read, update, or delete tasks within their own `tasks` subcollection. This structure supports the application requirements of creating, editing, deleting, and viewing tasks, while ensuring only authenticated users can perform these actions on their own data.\n\nThis structure inherently supports QAPs (Rules are not Filters) because listing the `/users/{userId}/tasks` collection is secure, as rules can be easily scoped to the authenticated user ID without needing to filter data based on user ID after the data is retrieved."
+    "reasoning": "The Firestore structure is designed to ensure secure access and management of notes within the Notist application. Each user has their own collection of notes located at `/users/{userId}/notes/{noteId}`. This design leverages path-based ownership, meaning the user ID is embedded in the document path. This is the most straightforward and secure way to enforce that only the authenticated user can access their notes. This approach enables simple, robust, and easily debuggable security rules. It enforces that each user can only create, read, update, or delete notes within their own `notes` subcollection."
   }
 }

@@ -5,26 +5,15 @@ import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Info, NotebookPen, Search, MailWarning } from "lucide-react";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import NoteItem from "./NoteItem";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
-import { collection, doc, orderBy, query, where } from "firebase/firestore";
+import { collection, doc, orderBy, query } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
-import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
 
 export function NoteList() {
@@ -33,11 +22,10 @@ export function NoteList() {
   const [draggedItem, setDraggedItem] = useState<Note | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "completed">("all");
 
   const notesQuery = useMemoFirebase(() => {
     if (!user || !user.emailVerified) return null;
-    return query(collection(firestore, `users/${user.uid}/tasks`), orderBy('createdAt', 'desc'));
+    return query(collection(firestore, `users/${user.uid}/notes`), orderBy('createdAt', 'desc'));
   }, [user, firestore]);
 
   const { data: notes, isLoading } = useCollection<Note>(notesQuery);
@@ -46,12 +34,6 @@ export function NoteList() {
     if (!notes) return [];
     return notes
       .filter(note => {
-        // Status filter
-        if (filterStatus !== 'all') {
-          const isCompleted = filterStatus === 'completed';
-          if (note.completed !== isCompleted) return false;
-        }
-
         // Tag filter
         if (filterTag !== 'all') {
             if (!note.tags || !note.tags.includes(filterTag)) return false;
@@ -64,7 +46,7 @@ export function NoteList() {
         
         return matchesSearch;
       });
-  }, [notes, searchTerm, filterStatus, filterTag]);
+  }, [notes, searchTerm, filterTag]);
 
   const allTags = useMemo(() => {
     if (!notes) return [];
@@ -74,26 +56,11 @@ export function NoteList() {
   }, [notes]);
 
 
-  const handleToggleComplete = (id: string, completed: boolean) => {
-    if (!user) return;
-    const docRef = doc(firestore, `users/${user.uid}/tasks`, id);
-    updateDocumentNonBlocking(docRef, { completed });
-  };
-
   const handleDeleteNote = (id: string) => {
     if (!user) return;
-    const docRef = doc(firestore, `users/${user.uid}/tasks`, id);
+    const docRef = doc(firestore, `users/${user.uid}/notes`, id);
     deleteDocumentNonBlocking(docRef);
   };
-  
-  const handleClearCompleted = () => {
-    if (!user || !notes) return;
-    const completedNotes = notes.filter(note => note.completed);
-    completedNotes.forEach(note => {
-        const docRef = doc(firestore, `users/${user.uid}/tasks`, note.id);
-        deleteDocumentNonBlocking(docRef);
-    });
-  }
   
   const handleMove = (id: string, direction: 'up' | 'down') => {
     // Note: Reordering is complex with Firestore queries.
@@ -132,8 +99,6 @@ export function NoteList() {
         });
     }
   }
-
-  const completedCount = notes?.filter(t => t.completed).length || 0;
 
   if (isUserLoading) {
     return (
@@ -212,16 +177,6 @@ export function NoteList() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={filterStatus} onValueChange={(value) => setFilterStatus(value as any)}>
-                <SelectTrigger className="w-full sm:w-[150px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
         </div>
       </CardHeader>
@@ -234,7 +189,6 @@ export function NoteList() {
                 key={note.id}
                 note={note}
                 isDragged={draggedItem?.id === note.id}
-                onToggleComplete={handleToggleComplete}
                 onDelete={handleDeleteNote}
                 onMove={handleMove}
                 onDragStart={handleDragStart}
@@ -253,27 +207,6 @@ export function NoteList() {
               <p className="text-sm">Try a different search or filter.</p>
             </div>
           )
-        )}
-        {notes && notes.length > 0 && completedCount > 0 && (
-           <div className="mt-4 flex justify-end">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm">Clear {completedCount} completed note(s)</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete all completed notes. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleClearCompleted} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Clear Completed</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-           </div>
         )}
       </CardContent>
     </Card>
