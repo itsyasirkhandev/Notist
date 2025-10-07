@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useRef, useEffect } from 'react';
@@ -58,6 +59,10 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     if (url) {
       execCommand("createLink", url);
     }
+  };
+
+  const enableImageResizing = () => {
+    document.execCommand('enableObjectResizing', false, 'true');
   };
 
   return (
@@ -130,6 +135,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         ref={editorRef}
         contentEditable="true"
         onInput={handleInput}
+        onFocus={enableImageResizing}
         className="prose dark:prose-invert max-w-none min-h-[250px] w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       />
     </div>
