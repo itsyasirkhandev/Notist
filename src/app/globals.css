@@ -93,4 +93,18 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     letter-spacing: var(--tracking-normal);
   }
+  .prose ul>li::marker {
+    font-size: inherit;
+    color: inherit;
+  }
+  .prose ol>li::marker {
+    font-size: inherit;
+    color: inherit;
+  }
+  .dark .prose ul>li::marker {
+    color: inherit;
+  }
+  .dark .prose ol>li::marker {
+    color: inherit;
+  }
 }
