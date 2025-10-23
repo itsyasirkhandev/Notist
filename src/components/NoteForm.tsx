@@ -55,8 +55,20 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
 
   const saveNote = useCallback(async () => {
     if (!user || !firestore || isInitialLoad) return;
-    // Don't save an empty new note
-    if (!noteId && !title.trim() && !content.trim()) return;
+
+    const hasContent = title.trim() !== '' || content.trim() !== '';
+    const noteExists = !!noteId;
+
+    // Don't save if it's a new note with no content
+    if (!noteExists && !hasContent) {
+        return;
+    }
+    
+    const hasChanged = note ? title !== note.title || content !== note.content || JSON.stringify(tags) !== JSON.stringify(note.tags) : hasContent;
+
+    if (!hasChanged) {
+        return;
+    }
 
     setSavingStatus("saving");
 
@@ -68,32 +80,33 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
         updatedAt: timestamp,
     };
 
-    if (noteId) {
-        const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
-        await setDocumentNonBlocking(docRef, noteData, { merge: true });
-    } else {
-        const collectionRef = collection(firestore, `users/${user.uid}/notes`);
-        const newDocRef = await addDoc(collectionRef, {
-            ...noteData,
-            createdAt: timestamp,
-            userId: user.uid,
-        });
-        setNoteId(newDocRef.id);
-        // Replace the URL to reflect the new note's ID without a full navigation
-        router.replace(`/notes/${newDocRef.id}`, { scroll: false });
-    }
-    
-    // Use a timeout to avoid flashing the "saved" message too quickly
-    setTimeout(() => {
+    try {
+        if (noteId) {
+            const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
+            await setDocumentNonBlocking(docRef, noteData, { merge: true });
+        } else {
+            const collectionRef = collection(firestore, `users/${user.uid}/notes`);
+            const newDocRef = await addDoc(collectionRef, {
+                ...noteData,
+                createdAt: timestamp,
+                userId: user.uid,
+            });
+            setNoteId(newDocRef.id);
+            // Replace the URL to reflect the new note's ID without a full navigation
+            router.replace(`/notes/${newDocRef.id}`, { scroll: false });
+        }
+        
         setSavingStatus("saved");
-    }, 500);
+    } catch (error) {
+        console.error("Failed to save note:", error);
+        setSavingStatus("idle"); // Revert status on error
+    }
 
-  }, [title, content, tags, user, firestore, noteId, router, isInitialLoad]);
+  }, [title, content, tags, user, firestore, noteId, router, isInitialLoad, note]);
 
   useEffect(() => {
     if (isInitialLoad) return;
 
-    setSavingStatus("idle");
     const handler = setTimeout(() => {
       saveNote();
     }, 1500); // Debounce time: 1.5 seconds
@@ -102,6 +115,13 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
       clearTimeout(handler);
     };
   }, [title, content, tags, saveNote, isInitialLoad]);
+
+  useEffect(() => {
+    if (savingStatus === 'saved') {
+        const timer = setTimeout(() => setSavingStatus('idle'), 2000);
+        return () => clearTimeout(timer);
+    }
+  }, [savingStatus]);
 
 
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -126,18 +146,18 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const getSavingStatusText = () => {
     switch (savingStatus) {
         case 'saving':
-            return 'Saving...';
+            return 'Saving...'; // This will be very brief
         case 'saved':
             return 'All changes saved';
         default:
-            return '';
+            return '\u00A0'; // Non-breaking space to maintain height
     }
   };
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
-        <div className="flex items-center justify-end px-6 pt-4 h-8 text-sm text-muted-foreground">
-            {getSavingStatusText()}
+        <div className="flex items-center justify-end px-6 pt-4 h-8 text-sm text-muted-foreground transition-opacity duration-500 opacity-100">
+            {savingStatus === 'saved' && 'All changes saved'}
         </div>
         <CardContent className="space-y-4 p-4 md:p-6 pt-0">
           <div className="space-y-2 p-2">
