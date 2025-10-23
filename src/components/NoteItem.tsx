@@ -57,7 +57,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
       <div className="w-full p-4 border-t flex justify-between items-center">
         <div className="flex-grow">
             <Link href={`/notes/${note.id}`} className="block">
-              <h3 className="font-semibold text-base break-words truncate">{note.title || "Untitled Note"}</h3>
+              <h3 className="font-semibold text-base break-words">{note.title || "Untitled Note"}</h3>
             </Link>
             <p className="text-sm text-muted-foreground mt-1">
                 Opened {createdDate}
