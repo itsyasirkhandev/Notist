@@ -48,6 +48,25 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
     }
   }, [value]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'f') {
+        const target = event.target as HTMLElement;
+        // Prevent shortcut from firing if we're inside an input, textarea, or the editor itself
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+          return;
+        }
+        event.preventDefault();
+        setIsFullScreen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const handleInput = () => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
