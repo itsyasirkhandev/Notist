@@ -23,6 +23,8 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/select";
+import { Notebook } from "lucide-react";
 
 interface NoteItemProps {
   note: Note;
@@ -59,7 +61,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             <span
               id={`note-label-${note.id}`}
               className={cn(
-                "font-medium text-base transition-colors",
+                "font-medium text-base transition-colors break-words",
                 "text-foreground"
               )}
             >
@@ -67,7 +69,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             </span>
             <p 
                 className={cn(
-                  "text-sm transition-colors text-muted-foreground mt-1"
+                  "text-sm transition-colors text-muted-foreground mt-1 break-words"
                 )}
               >
                 {truncatedContent.substring(0, 120)}{truncatedContent.length > 120 ? '...' : ''}
