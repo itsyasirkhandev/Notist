@@ -25,7 +25,7 @@ export function NoteList() {
 
   const notesQuery = useMemoFirebase(() => {
     if (!user || !user.emailVerified) return null;
-    return query(collection(firestore, `users/${user.uid}/notes`), orderBy('createdAt', 'desc'));
+    return query(collection(firestore, `users/${user.uid}/notes`), orderBy('updatedAt', 'desc'));
   }, [user, firestore]);
 
   const { data: notes, isLoading } = useCollection<Note>(notesQuery);
@@ -126,8 +126,8 @@ export function NoteList() {
   const hasFiltersApplied = searchTerm.trim() !== "" || filterTag !== "all";
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader className="space-y-4">
+    <Card className="w-full shadow-lg border-none">
+      <CardHeader className="space-y-4 p-4 md:p-6">
         <div className="flex flex-col sm:flex-row gap-2">
             <Link href="/notes/new" className="w-full">
                 <Button className="w-full" aria-label="Add New Note">
@@ -161,7 +161,7 @@ export function NoteList() {
             </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 md:p-6 pt-0">
         {isLoading && (
           <div className="text-center py-10">
             <Loader />
@@ -181,15 +181,15 @@ export function NoteList() {
           !isLoading && (
             <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
               <Info className="h-6 w-6"/>
-              {hasFiltersApplied ? (
-                <>
-                  <p className="font-medium">No notes match your filters!</p>
-                  <p className="text-sm">Try a different search or filter.</p>
+              {notes && notes.length === 0 && !hasFiltersApplied ? (
+                 <>
+                  <p className="font-medium">No notes yet!</p>
+                  <p className="text-sm">Click "Add New Note" to get started.</p>
                 </>
               ) : (
                 <>
-                  <p className="font-medium">No notes yet!</p>
-                  <p className="text-sm">Click "Add New Note" to get started.</p>
+                  <p className="font-medium">No notes match your filters!</p>
+                  <p className="text-sm">Try a different search or filter.</p>
                 </>
               )}
             </div>

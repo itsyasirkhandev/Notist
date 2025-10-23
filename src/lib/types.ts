@@ -7,6 +7,6 @@ export interface Note {
   content: string;
   tags: string[];
   createdAt: Timestamp;
-  updatedAt?: Timestamp;
+  updatedAt: Timestamp;
   userId?: string;
 }
