@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   Bold,
   Italic,
@@ -21,11 +21,15 @@ import {
   AlignJustify,
   Indent,
   Outdent,
+  Maximize,
+  Minimize,
 } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 interface RichTextEditorProps {
   value: string;
@@ -36,6 +40,7 @@ const fontList = ["Arial", "Verdana", "Times New Roman", "Garamond", "Georgia", 
 
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     if (editorRef.current && value !== editorRef.current.innerHTML) {
@@ -66,7 +71,10 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   };
 
   return (
-    <div className="rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+    <div className={cn(
+        "rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 relative",
+        isFullScreen && "fixed inset-0 z-50 bg-background"
+    )}>
       <div className="p-2 border-b border-input flex flex-wrap items-center gap-1">
         <ToggleGroup type="multiple" className="flex items-center justify-start flex-wrap gap-1">
           <ToggleGroupItem value="bold" aria-label="Toggle bold" onClick={() => execCommand('bold')}><Bold className="h-4 w-4" /></ToggleGroupItem>
@@ -136,8 +144,20 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         contentEditable="true"
         onInput={handleInput}
         onFocus={enableImageResizing}
-        className="prose dark:prose-invert max-w-none min-h-[250px] w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(
+            "prose dark:prose-invert max-w-none w-full rounded-b-md bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+            isFullScreen ? "h-[calc(100vh_-_4rem)] overflow-auto" : "min-h-[250px]"
+        )}
       />
+       <Button 
+        variant="ghost" 
+        size="icon" 
+        className="absolute bottom-2 right-2 h-8 w-8"
+        onClick={() => setIsFullScreen(!isFullScreen)}
+        >
+            {isFullScreen ? <Minimize /> : <Maximize />}
+            <span className="sr-only">{isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}</span>
+        </Button>
     </div>
   );
 }
