@@ -171,7 +171,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleTagInputKeyDown}
                     placeholder="Add tags..."
-                    className="flex-grow h-8 border-none shadow-none focus-visible:ring-0 p-0"
+                    className="flex-grow h-8 border-none shadow-none p-0"
                 />
             </div>
           </div>
