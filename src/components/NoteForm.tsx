@@ -147,7 +147,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
-              className="text-2xl font-bold border-none shadow-none px-2 h-auto focus-visible:ring-0"
+              className="text-2xl font-bold border-none shadow-none px-2 h-auto"
             />
           </div>
           <RichTextEditor value={content} onChange={setContent} />
