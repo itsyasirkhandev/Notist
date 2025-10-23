@@ -1,3 +1,4 @@
+
 import { NoteForm } from "@/components/NoteForm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -16,12 +17,12 @@ export default async function EditNotePage({ params }: { params: { id: string } 
                             </Link>
                         </Button>
                         <h1 className="text-2xl font-bold tracking-tight">
-                        Edit Note
+                         Edit Note
                         </h1>
                     </div>
                 </div>
             </div>
-            <div className="w-full p-4 md:pt-8">
+            <div className="w-full p-4">
                 <main>
                     <NoteForm noteId={id} />
                 </main>

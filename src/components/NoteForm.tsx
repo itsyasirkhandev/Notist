@@ -4,44 +4,105 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Plus, Tag, X } from "lucide-react";
-import React, { useState, useEffect, FormEvent, KeyboardEvent } from "react";
+import { Tag, X } from "lucide-react";
+import React, { useState, useEffect, KeyboardEvent, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { RichTextEditor } from "./RichTextEditor";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
-import { doc, serverTimestamp, collection } from "firebase/firestore";
-import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { doc, serverTimestamp, collection, addDoc } from "firebase/firestore";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Loader } from "./Loader";
+
+type SavingStatus = "idle" | "saving" | "saved";
 
 interface NoteFormProps {
     noteId?: string;
 }
 
-export function NoteForm({ noteId }: NoteFormProps) {
+export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const router = useRouter();
   const { firestore, user } = useFirebase();
+  const [noteId, setNoteId] = useState(initialNoteId);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [savingStatus, setSavingStatus] = useState<SavingStatus>("idle");
+
   const noteRef = useMemoFirebase(() => {
     if (!noteId || !user || !firestore) return null;
     return doc(firestore, `users/${user.uid}/notes`, noteId);
   }, [noteId, user, firestore]);
 
-  const { data: note, isLoading } = useDoc<Note>(noteRef);
+  const { data: note, isLoading: isNoteLoading } = useDoc<Note>(noteRef);
 
   useEffect(() => {
     if (note) {
       setTitle(note.title);
       setContent(note.content);
       setTags(note.tags || []);
+      setIsInitialLoad(false);
+    } else if (!isNoteLoading) {
+      // If there's no note and we're not loading, it's a new note.
+      setIsInitialLoad(false);
     }
-  }, [note]);
+  }, [note, isNoteLoading]);
+
+
+  const saveNote = useCallback(async () => {
+    if (!user || !firestore || isInitialLoad) return;
+    // Don't save an empty new note
+    if (!noteId && !title.trim() && !content.trim()) return;
+
+    setSavingStatus("saving");
+
+    const timestamp = serverTimestamp();
+    const noteData = {
+        title,
+        content,
+        tags,
+        updatedAt: timestamp,
+    };
+
+    if (noteId) {
+        const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
+        await setDocumentNonBlocking(docRef, noteData, { merge: true });
+    } else {
+        const collectionRef = collection(firestore, `users/${user.uid}/notes`);
+        const newDocRef = await addDoc(collectionRef, {
+            ...noteData,
+            createdAt: timestamp,
+            userId: user.uid,
+        });
+        setNoteId(newDocRef.id);
+        // Replace the URL to reflect the new note's ID without a full navigation
+        router.replace(`/notes/${newDocRef.id}`, { scroll: false });
+    }
+    
+    // Use a timeout to avoid flashing the "saved" message too quickly
+    setTimeout(() => {
+        setSavingStatus("saved");
+    }, 500);
+
+  }, [title, content, tags, user, firestore, noteId, router, isInitialLoad]);
+
+  useEffect(() => {
+    if (isInitialLoad) return;
+
+    setSavingStatus("idle");
+    const handler = setTimeout(() => {
+      saveNote();
+    }, 1500); // Debounce time: 1.5 seconds
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [title, content, tags, saveNote, isInitialLoad]);
+
 
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -58,43 +119,27 @@ export function NoteForm({ noteId }: NoteFormProps) {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
   
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!user || !firestore) return;
-    if (title.trim() === "" && content.trim() === "") return;
-
-    const timestamp = serverTimestamp();
-
-    const noteData = {
-        title,
-        content,
-        tags,
-        updatedAt: timestamp,
-    };
-    
-    if (noteId) {
-        const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
-        setDocumentNonBlocking(docRef, noteData, { merge: true });
-    } else {
-        const collectionRef = collection(firestore, `users/${user.uid}/notes`);
-        addDocumentNonBlocking(collectionRef, {
-            ...noteData,
-            createdAt: timestamp,
-            userId: user.uid,
-        });
-    }
-
-    router.push("/");
-  };
-
-  if (noteId && isLoading) {
+  if (isNoteLoading) {
     return <div className="flex items-center justify-center min-h-[400px]"><Loader /></div>
   }
 
+  const getSavingStatusText = () => {
+    switch (savingStatus) {
+        case 'saving':
+            return 'Saving...';
+        case 'saved':
+            return 'All changes saved';
+        default:
+            return '';
+    }
+  };
+
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4 p-4 md:p-6">
+        <div className="flex items-center justify-end px-6 pt-4 h-8 text-sm text-muted-foreground">
+            {getSavingStatusText()}
+        </div>
+        <CardContent className="space-y-4 p-4 md:p-6 pt-0">
           <div className="space-y-2 p-2">
             <Label htmlFor="title" className="sr-only">Title</Label>
             <Input
@@ -102,7 +147,6 @@ export function NoteForm({ noteId }: NoteFormProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
-              required
               className="text-2xl font-bold border-none shadow-none px-2 h-auto focus-visible:ring-0"
             />
           </div>
@@ -132,14 +176,6 @@ export function NoteForm({ noteId }: NoteFormProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end gap-2 p-4 md:p-6 pt-0">
-            <Button type="button" variant="ghost" onClick={() => router.push('/')}>Cancel</Button>
-            <Button type="submit">
-                <Plus className="h-4 w-4 mr-2" />
-                {noteId ? "Save Changes" : "Add Note"}
-            </Button>
-        </CardFooter>
-      </form>
     </Card>
   );
 }
