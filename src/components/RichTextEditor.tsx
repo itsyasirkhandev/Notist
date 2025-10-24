@@ -20,22 +20,38 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           onChange(data);
         }}
         config={{
-            toolbar: [
-                'heading',
-                '|',
-                'bold',
-                'italic',
-                'link',
-                'bulletedList',
-                'numberedList',
-                '|',
-                'outdent',
-                'indent',
-                '|',
-                'blockQuote',
-                'undo',
-                'redo'
-            ],
+          toolbar: {
+            items: [
+              'heading',
+              '|',
+              'bold',
+              'italic',
+              'underline',
+              'strikethrough',
+              'link',
+              '|',
+              'bulletedList',
+              'numberedList',
+              'todoList',
+              '|',
+              'outdent',
+              'indent',
+              '|',
+              'blockQuote',
+              'insertTable',
+              'mediaEmbed',
+              '|',
+              'undo',
+              'redo'
+            ]
+          },
+          table: {
+            contentToolbar: [
+              'tableColumn',
+              'tableRow',
+              'mergeTableCells'
+            ]
+          }
         }}
       />
     </div>
