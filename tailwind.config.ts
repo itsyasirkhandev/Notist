@@ -74,7 +74,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Architects Daughter", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
       },

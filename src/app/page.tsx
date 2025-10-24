@@ -34,9 +34,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-background font-body selection:bg-primary/20">
-      <div className='w-full bg-primary text-primary-foreground border-b-4 border-border'>
-        <div className="w-full max-w-5xl mx-auto p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold tracking-tight">
+      <header className='w-full border-b border-border'>
+        <div className="w-full max-w-7xl mx-auto p-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold tracking-tight text-primary">
               Notist
             </h1>
             <div className="flex items-center gap-4">
@@ -44,8 +44,8 @@ export default function Home() {
               <Auth />
             </div>
         </div>
-      </div>
-      <div className="w-full max-w-5xl mx-auto p-4 md:py-8">
+      </header>
+      <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
         <main>
           <NoteList />
         </main>

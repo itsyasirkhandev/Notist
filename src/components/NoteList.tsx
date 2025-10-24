@@ -3,7 +3,7 @@
 
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Info, NotebookPen, Search, MailWarning } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import NoteItem from "./NoteItem";
@@ -81,7 +81,7 @@ export function NoteList() {
 
   if (isUserLoading) {
     return (
-      <Card className="w-full shadow-lg">
+      <Card className="w-full shadow-none border-none">
           <CardContent>
               <div className="text-center py-10 text-muted-foreground">
                   <Loader />
@@ -93,7 +93,7 @@ export function NoteList() {
 
   if (!user) {
     return (
-        <Card className="w-full shadow-lg">
+        <Card className="w-full shadow-none border-none">
             <CardContent>
                 <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
                     <Info className="h-6 w-6"/>
@@ -126,49 +126,47 @@ export function NoteList() {
   const hasFiltersApplied = searchTerm.trim() !== "" || filterTag !== "all";
 
   return (
-    <Card className="w-full shadow-lg border-none">
-      <CardHeader className="space-y-4 p-4 md:p-6">
-        <div className="flex flex-col sm:flex-row gap-2">
-            <Link href="/notes/new" className="w-full">
-                <Button className="w-full" aria-label="Add New Note">
-                    <NotebookPen className="h-4 w-4 mr-2" />
-                    Add New Note
-                </Button>
-            </Link>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2">
-            <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                    placeholder="Search notes..."
-                    className="pl-10 w-full"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Select value={filterTag} onValueChange={setFilterTag}>
-                <SelectTrigger className="w-full sm:w-[150px]">
-                  <SelectValue placeholder="Filter by tag" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Tags</SelectItem>
-                  {allTags.map(tag => (
-                    <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 md:p-6 pt-0">
+    <>
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold tracking-tight">Your Notes</h2>
+        <p className="text-muted-foreground">Manage your notes or create a new one.</p>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2 mb-6">
+          <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                  placeholder="Search notes..."
+                  className="pl-10 w-full"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
+          </div>
+          <Select value={filterTag} onValueChange={setFilterTag}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by tag" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Tags</SelectItem>
+              {allTags.map(tag => (
+                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Link href="/notes/new" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto" aria-label="Add New Note">
+                  <NotebookPen className="h-4 w-4 mr-2" />
+                  Add New Note
+              </Button>
+          </Link>
+      </div>
+      <div>
         {isLoading && (
           <div className="text-center py-10">
             <Loader />
           </div>
         )}
         {!isLoading && filteredNotes.length > 0 ? (
-          <ul className="gap-4 md:columns-2 lg:columns-3 xl:columns-4">
+          <ul className="gap-6 md:columns-2 lg:columns-3 xl:columns-4">
             {filteredNotes.map((note) => (
               <NoteItem
                 key={note.id}
@@ -179,23 +177,23 @@ export function NoteList() {
           </ul>
         ) : (
           !isLoading && (
-            <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
-              <Info className="h-6 w-6"/>
+            <div className="text-center py-20 text-muted-foreground flex flex-col items-center gap-2 border border-dashed rounded-lg">
+              <Info className="h-8 w-8"/>
               {notes && notes.length === 0 && !hasFiltersApplied ? (
                  <>
-                  <p className="font-medium">No notes yet!</p>
+                  <p className="font-medium text-lg mt-2">No notes yet!</p>
                   <p className="text-sm">Click "Add New Note" to get started.</p>
                 </>
               ) : (
                 <>
-                  <p className="font-medium">No notes match your filters!</p>
+                  <p className="font-medium text-lg mt-2">No notes match your filters!</p>
                   <p className="text-sm">Try a different search or filter.</p>
                 </>
               )}
             </div>
           )
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }

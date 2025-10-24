@@ -40,21 +40,21 @@ const NoteItem: React.FC<NoteItemProps> = ({
   return (
     <li
       className={cn(
-        "group flex flex-col h-80 items-start rounded-lg border bg-card text-card-foreground transition-all break-inside-avoid-column mb-4 shadow-sm hover:shadow-lg",
+        "group flex flex-col h-80 items-start rounded-lg border bg-card text-card-foreground transition-all break-inside-avoid-column mb-4 shadow-sm hover:shadow-md",
       )}
       aria-roledescription="Note item"
     >
       <Link href={`/notes/${note.id}`} className="block w-full flex-grow overflow-hidden">
-        <div className="p-4 relative h-full">
+        <div className="p-6 relative h-full">
           <div 
             className="prose prose-sm dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: note.content }}
           />
-          <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-card to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
       </Link>
       
-      <div className="w-full p-4 border-t flex justify-between items-center">
+      <div className="w-full p-6 pt-0 border-t flex justify-between items-center">
         <div className="flex-grow overflow-hidden">
             <Link href={`/notes/${note.id}`} className="block">
               <h3 className="font-semibold text-base truncate">{note.title || "Untitled Note"}</h3>
