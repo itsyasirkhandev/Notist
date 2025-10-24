@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -21,12 +20,9 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           onChange(data);
         }}
         config={{
-            toolbar: [
-                'heading', '|',
-                'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'imageUpload', 'blockQuote', 'insertTable', 'undo', 'redo'
-            ]
+            // By not providing a manual toolbar config, we let the classic build
+            // use its default toolbar, which includes the fully functional imageUpload
+            // button and all its dependencies. This is the correct way to enable it.
         }}
       />
     </div>
