@@ -2,19 +2,24 @@
 "use client";
 
 import { Note } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tag, X } from "lucide-react";
-import React, { useState, useEffect, KeyboardEvent, useMemo, useCallback } from "react";
+import React, { useState, useEffect, KeyboardEvent, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
-import { RichTextEditor } from "./RichTextEditor";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
 import { doc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Loader } from "./Loader";
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('./RichTextEditor').then(mod => mod.RichTextEditor), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center min-h-[250px]"><Loader /></div>,
+});
+
 
 type SavingStatus = "idle" | "saving" | "saved";
 
@@ -142,17 +147,6 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   if (isNoteLoading) {
     return <div className="flex items-center justify-center min-h-[400px]"><Loader /></div>
   }
-
-  const getSavingStatusText = () => {
-    switch (savingStatus) {
-        case 'saving':
-            return 'Saving...'; // This will be very brief
-        case 'saved':
-            return 'All changes saved';
-        default:
-            return '\u00A0'; // Non-breaking space to maintain height
-    }
-  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
