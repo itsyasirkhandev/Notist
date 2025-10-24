@@ -36,8 +36,8 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
   return (
     <div className={cn(
-      "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 relative",
-      isFullScreen && "fixed inset-0 z-50"
+      "relative",
+      isFullScreen && "fixed inset-0 z-50 bg-background p-4"
     )}>
       <Button 
         variant="ghost" 
@@ -51,48 +51,53 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         {isFullScreen ? <Minimize /> : <Maximize />}
         <span className="sr-only">{isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}</span>
       </Button>
-      <CKEditor
-        editor={ClassicEditor}
-        data={value}
-        onChange={(event, editor) => {
-          const data = editor.getData();
-          onChange(data);
-        }}
-        config={{
-          toolbar: {
-            items: [
-              'heading',
-              '|',
-              'bold',
-              'italic',
-              'underline',
-              'strikethrough',
-              'link',
-              '|',
-              'bulletedList',
-              'numberedList',
-              'todoList',
-              '|',
-              'outdent',
-              'indent',
-              '|',
-              'blockQuote',
-              'insertTable',
-              'mediaEmbed',
-              '|',
-              'undo',
-              'redo'
-            ]
-          },
-          table: {
-            contentToolbar: [
-              'tableColumn',
-              'tableRow',
-              'mergeTableCells'
-            ]
-          }
-        }}
-      />
+      <div className={cn(
+        "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+        isFullScreen && "h-full"
+      )}>
+        <CKEditor
+          editor={ClassicEditor}
+          data={value}
+          onChange={(event, editor) => {
+            const data = editor.getData();
+            onChange(data);
+          }}
+          config={{
+            toolbar: {
+              items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'underline',
+                'strikethrough',
+                'link',
+                '|',
+                'bulletedList',
+                'numberedList',
+                'todoList',
+                '|',
+                'outdent',
+                'indent',
+                '|',
+                'blockQuote',
+                'insertTable',
+                'mediaEmbed',
+                '|',
+                'undo',
+                'redo'
+              ]
+            },
+            table: {
+              contentToolbar: [
+                'tableColumn',
+                'tableRow',
+                'mergeTableCells'
+              ]
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }
