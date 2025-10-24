@@ -53,7 +53,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       </Button>
       <div className={cn(
         "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-        isFullScreen && "h-full"
+        isFullScreen && "h-full overflow-y-auto"
       )}>
         <CKEditor
           editor={ClassicEditor}
