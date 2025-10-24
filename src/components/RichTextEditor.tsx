@@ -37,12 +37,15 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   return (
     <div className={cn(
       "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 relative",
-      isFullScreen && "fixed inset-0 z-50 p-4"
+      isFullScreen && "fixed inset-0 z-50"
     )}>
       <Button 
         variant="ghost" 
         size="icon" 
-        className="absolute top-2 right-2 z-10 h-8 w-8"
+        className={cn(
+            "absolute top-2 right-2 z-20 h-8 w-8",
+            isFullScreen && "top-4 right-4"
+            )}
         onClick={() => setIsFullScreen(prev => !prev)}
       >
         {isFullScreen ? <Minimize /> : <Maximize />}
