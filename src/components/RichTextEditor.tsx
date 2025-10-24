@@ -1,8 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Maximize, Minimize } from 'lucide-react';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
   value: string;
@@ -10,8 +13,41 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'f') {
+        // Prevent toggling when typing in an input field
+        const target = event.target as HTMLElement;
+        if (target.tagName.toLowerCase() === 'input' || target.tagName.toLowerCase() === 'textarea' || target.isContentEditable) {
+          return;
+        }
+        event.preventDefault();
+        setIsFullScreen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
-    <div className="prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 relative">
+    <div className={cn(
+      "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 relative",
+      isFullScreen && "fixed inset-0 z-50 p-4"
+    )}>
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="absolute top-2 right-2 z-10 h-8 w-8"
+        onClick={() => setIsFullScreen(prev => !prev)}
+      >
+        {isFullScreen ? <Minimize /> : <Maximize />}
+        <span className="sr-only">{isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}</span>
+      </Button>
       <CKEditor
         editor={ClassicEditor}
         data={value}
