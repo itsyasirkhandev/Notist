@@ -25,7 +25,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
                 'heading', '|',
                 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
                 'outdent', 'indent', '|',
-                'blockQuote', 'insertTable', 'undo', 'redo'
+                'imageUpload', 'blockQuote', 'insertTable', 'undo', 'redo'
             ]
         }}
       />
