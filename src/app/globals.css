@@ -110,7 +110,7 @@
 }
 
 @layer utilities {
-  .ck-powered-by {
+  .ck.ck-powered-by {
     display: none !important;
   }
 }
