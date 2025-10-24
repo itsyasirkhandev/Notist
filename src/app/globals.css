@@ -109,8 +109,6 @@
   }
 }
 
-@layer utilities {
-  .ck.ck-powered-by {
-    display: none !important;
-  }
+.ck.ck-powered-by {
+  display: none !important;
 }
