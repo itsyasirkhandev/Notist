@@ -108,3 +108,9 @@
     color: inherit;
   }
 }
+
+@layer utilities {
+  .ck-powered-by {
+    display: none !important;
+  }
+}
