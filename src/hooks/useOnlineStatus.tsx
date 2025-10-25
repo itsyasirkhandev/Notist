@@ -4,26 +4,26 @@
 import { useState, useEffect } from 'react';
 
 export function useOnlineStatus() {
-    const [isOnline, setIsOnline] = useState(
-        typeof navigator !== 'undefined' ? navigator.onLine : true
-    );
+  const [isOnline, setIsOnline] = useState(true);
 
-    useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
+  useEffect(() => {
+    // This effect runs only on the client side
+    
+    // Set the initial status from the browser's navigator object
+    setIsOnline(navigator.onLine);
 
-        const handleOnline = () => setIsOnline(true);
-        const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
-        return () => {
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
-        };
-    }, []);
+    // Cleanup function to remove event listeners when the component unmounts
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []); // The empty dependency array ensures this effect runs only once on mount
 
-    return isOnline;
+  return isOnline;
 }
