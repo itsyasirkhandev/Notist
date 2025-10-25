@@ -69,7 +69,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
         return;
     }
     
-    const hasChanged = note ? title !== note.title || content !== note.content || JSON.stringify(tags) !== JSON.stringify(note.tags) : hasContent;
+    const hasChanged = note ? title !== note.title || content !== note.content || JSON.stringify(tags) !== JSON.stringify(note.tags || []) : hasContent;
 
     if (!hasChanged) {
         return;
@@ -95,6 +95,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
                 ...noteData,
                 createdAt: timestamp,
                 userId: user.uid,
+                pinned: false,
             });
             setNoteId(newDocRef.id);
             // Replace the URL to reflect the new note's ID without a full navigation
@@ -151,6 +152,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-none">
         <div className="flex items-center justify-end px-6 pt-4 h-8 text-sm text-muted-foreground transition-opacity duration-500 opacity-100">
+            {savingStatus === 'saving' && 'Saving...'}
             {savingStatus === 'saved' && 'All changes saved'}
         </div>
         <CardContent className="space-y-4 p-4 md:p-6 pt-0">

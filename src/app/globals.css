@@ -116,3 +116,7 @@
 .ck.ck-powered-by {
   display: none !important;
 }
+
+.ck.ck-editor__main, .ck.ck-editor__editable {
+  height: 100%;
+}
