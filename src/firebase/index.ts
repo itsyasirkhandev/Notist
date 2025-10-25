@@ -4,25 +4,32 @@
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, persistentLocalCache, Firestore, getFirestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, persistentLocalCache, Firestore } from 'firebase/firestore';
 
-let firebaseApp: FirebaseApp;
-if (!getApps().length) {
-  firebaseApp = initializeApp(firebaseConfig);
-} else {
-  firebaseApp = getApp();
+let firestoreInstance: Firestore | null = null;
+
+// IMPORTANT: DO NOT MODIFY THIS FUNCTION
+export function initializeFirebase() {
+  if (!getApps().length) {
+    const firebaseApp = initializeApp(firebaseConfig);
+    return getSdks(firebaseApp);
+  }
+
+  return getSdks(getApp());
 }
 
-// Initialize Firestore with offline persistence
-const firestore: Firestore = initializeFirestore(firebaseApp, {
-  localCache: persistentLocalCache(),
-});
+export function getSdks(firebaseApp: FirebaseApp) {
+  if (!firestoreInstance) {
+    // Initialize Firestore with persistent cache
+    firestoreInstance = initializeFirestore(firebaseApp, {
+      localCache: persistentLocalCache({})
+    });
+  }
 
-export function getSdks() {
   return {
     firebaseApp,
     auth: getAuth(firebaseApp),
-    firestore,
+    firestore: firestoreInstance
   };
 }
 
