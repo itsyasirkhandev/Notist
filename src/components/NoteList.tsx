@@ -11,9 +11,9 @@ import Link from "next/link";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
-import { collection, doc, orderBy, query } from "firebase/firestore";
+import { collection, doc, orderBy, query, serverTimestamp } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
-import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
 import { Loader } from "./Loader";
 
@@ -45,6 +45,16 @@ export function NoteList() {
           (note.content && note.content.toLowerCase().includes(searchTerm.toLowerCase()));
         
         return matchesSearch;
+      })
+      .sort((a, b) => {
+          // Pinned notes first
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          // Then sort by updatedAt
+          if (a.updatedAt && b.updatedAt) {
+              return b.updatedAt.toMillis() - a.updatedAt.toMillis();
+          }
+          return 0;
       });
   }, [notes, searchTerm, filterTag]);
 
@@ -60,6 +70,12 @@ export function NoteList() {
     if (!user) return;
     const docRef = doc(firestore, `users/${user.uid}/notes`, id);
     deleteDocumentNonBlocking(docRef);
+  };
+  
+  const handleTogglePin = (id: string, currentPinStatus: boolean) => {
+    if(!user) return;
+    const docRef = doc(firestore, `users/${user.uid}/notes`, id);
+    updateDocumentNonBlocking(docRef, { pinned: !currentPinStatus, updatedAt: serverTimestamp() });
   };
   
   const handleResendVerification = async () => {
@@ -107,9 +123,6 @@ export function NoteList() {
   if (user && !user.emailVerified) {
     return (
       <Card className="w-full shadow-lg">
-          <CardHeader>
-            <h2 className="text-xl font-semibold text-center">Verify Your Email</h2>
-          </CardHeader>
           <CardContent>
               <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-4">
                   <MailWarning className="h-12 w-12 text-primary"/>
@@ -172,6 +185,7 @@ export function NoteList() {
                 key={note.id}
                 note={note}
                 onDelete={handleDeleteNote}
+                onTogglePin={handleTogglePin}
               />
             ))}
           </ul>
@@ -197,3 +211,4 @@ export function NoteList() {
     </>
   );
 }
+

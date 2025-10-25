@@ -9,4 +9,6 @@ export interface Note {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   userId?: string;
+  pinned?: boolean;
 }
+

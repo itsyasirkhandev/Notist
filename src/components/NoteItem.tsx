@@ -7,6 +7,8 @@ import {
   Trash2,
   Pencil,
   MoreVertical,
+  Pin,
+  PinOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
@@ -21,18 +23,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { format } from "date-fns";
 
 interface NoteItemProps {
   note: Note;
   onDelete: (id: string) => void;
+  onTogglePin: (id: string, currentPinStatus: boolean) => void;
 }
 
 const NoteItem: React.FC<NoteItemProps> = ({
   note,
   onDelete,
+  onTogglePin,
 }) => {
 
   const createdDate = note.createdAt ? format(note.createdAt.toDate(), 'MMM d, yyyy') : 'No date';
@@ -41,6 +45,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
     <li
       className={cn(
         "group flex flex-col h-80 items-start rounded-lg border bg-card text-card-foreground transition-all break-inside-avoid-column mb-4 shadow-sm hover:shadow-md",
+        note.pinned && "border-primary/50 shadow-lg hover:shadow-xl"
       )}
       aria-roledescription="Note item"
     >
@@ -57,7 +62,10 @@ const NoteItem: React.FC<NoteItemProps> = ({
       <div className="w-full p-6 pt-0 border-t flex justify-between items-center">
         <div className="flex-grow overflow-hidden">
             <Link href={`/notes/${note.id}`} className="block">
-              <h3 className="font-semibold text-base truncate">{note.title || "Untitled Note"}</h3>
+              <h3 className="font-semibold text-base truncate flex items-center gap-2">
+                {note.pinned && <Pin className="h-4 w-4 text-primary flex-shrink-0" />}
+                {note.title || "Untitled Note"}
+              </h3>
             </Link>
             <p className="text-sm text-muted-foreground mt-1">
                 Opened {createdDate}
@@ -70,12 +78,26 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onTogglePin(note.id, !!note.pinned)}>
+                  {note.pinned ? (
+                    <>
+                      <PinOff className="mr-2 h-4 w-4" />
+                      Unpin
+                    </>
+                  ) : (
+                    <>
+                      <Pin className="mr-2 h-4 w-4" />
+                      Pin
+                    </>
+                  )}
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href={`/notes/${note.id}`} className="flex items-center">
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
                     </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
