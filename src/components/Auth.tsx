@@ -52,7 +52,7 @@ export function Auth() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user.photoURL ?? ""} alt={user.displayName ?? ""} />
+              <AvatarImage src={user.photoURL ?? ""} alt={user.displayName ? `${user.displayName}'s avatar` : "User avatar"} />
               <AvatarFallback>
                 {user.displayName
                   ? user.displayName.charAt(0)

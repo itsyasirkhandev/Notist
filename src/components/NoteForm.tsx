@@ -5,7 +5,7 @@ import { Note } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Tag, X, Maximize, Minimize } from "lucide-react";
+import { Tag, X, Maximize, Minimize, WifiOff } from "lucide-react";
 import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
@@ -16,6 +16,7 @@ import { Loader } from "./Loader";
 import dynamic from 'next/dynamic';
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus"; // Import the hook
 
 const RichTextEditor = dynamic(() => import('./RichTextEditor').then(mod => mod.RichTextEditor), {
   ssr: false,
@@ -32,6 +33,7 @@ interface NoteFormProps {
 export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const router = useRouter();
   const { firestore, user } = useFirebase();
+  const isOnline = useOnlineStatus(); // Use the hook
   const [noteId, setNoteId] = useState(initialNoteId);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -184,11 +186,17 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
     )}>
       <Card className={cn("shadow-lg border-none", isFullScreen && "h-full flex flex-col border-0 shadow-none rounded-none")}>
         <div className={cn("flex items-center justify-end px-6 pt-4 text-sm text-muted-foreground transition-opacity duration-500", isFullScreen ? "h-12" : "h-8")}>
-            <div className="flex-1">
+            <div className="flex-1 flex items-center gap-4" role="status" aria-live="polite">
+              {!isOnline && (
+                  <div className="flex items-center gap-2 text-destructive font-medium">
+                      <WifiOff className="h-4 w-4" />
+                      <span>Offline Mode</span>
+                  </div>
+              )}
               {(isFullScreen || savingStatus !== 'idle') && (
                 <div className="text-sm text-muted-foreground transition-opacity duration-500 opacity-100">
                   {savingStatus === 'saving' && 'Saving...'}
-                  {savingStatus === 'saved' && 'All changes saved'}
+                  {savingStatus === 'saved' && (isOnline ? 'All changes saved' : 'Saved locally')}
                 </div>
               )}
             </div>
@@ -198,7 +206,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
                 className="h-8 w-8 -mr-2"
                 onClick={() => setIsFullScreen(prev => !prev)}
             >
-                {isFullScreen ? <Minimize /> : <Maximize />}
+                {isFullScreen ? <Minimize aria-hidden="true" /> : <Maximize aria-hidden="true" />}
                 <span className="sr-only">{isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}</span>
             </Button>
         </div>
@@ -218,18 +226,19 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
               value={content} 
               onChange={setContent} 
               isFullScreen={isFullScreen}
+              ariaLabel="Note content"
             />
           </div>
           <div className={cn("space-y-2", isFullScreen && "hidden")}>
             <Label htmlFor="tags" className="sr-only">Tags</Label>
             <div className="flex items-center gap-2 rounded-md border border-input px-3 py-1">
-                <Tag className="h-4 w-4 text-muted-foreground"/>
+                <Tag aria-hidden="true" className="h-4 w-4 text-muted-foreground"/>
                 <div className="flex gap-1 flex-wrap">
                 {tags.map(tag => (
                     <Badge key={tag} variant="secondary">
                         {tag}
-                        <button onClick={() => handleRemoveTag(tag)} className="ml-1 rounded-full hover:bg-destructive/20 p-0.5">
-                            <X className="h-3 w-3" />
+                        <button onClick={() => handleRemoveTag(tag)} className="ml-1 rounded-full hover:bg-destructive/20 p-0.5" aria-label={`Remove ${tag} tag`}>
+                            <X aria-hidden="true" className="h-3 w-3" />
                         </button>
                     </Badge>
                 ))}

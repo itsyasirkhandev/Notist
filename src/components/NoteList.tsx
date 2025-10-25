@@ -112,7 +112,7 @@ export function NoteList() {
         <Card className="w-full shadow-none border-none">
             <CardContent>
                 <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-2">
-                    <Info className="h-6 w-6"/>
+                    <Info aria-hidden className="h-6 w-6"/>
                     <p className="font-medium">Please sign in to see your notes.</p>
                 </div>
             </CardContent>
@@ -125,7 +125,7 @@ export function NoteList() {
       <Card className="w-full shadow-lg">
           <CardContent>
               <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-4">
-                  <MailWarning className="h-12 w-12 text-primary"/>
+                  <MailWarning aria-hidden className="h-12 w-12 text-primary"/>
                   <p className="font-medium text-lg">A verification link has been sent to your email address:</p>
                   <p className="font-bold text-foreground">{user.email}</p>
                   <p>Please click the link in the email to continue. You may need to refresh this page after verifying.</p>
@@ -146,7 +146,7 @@ export function NoteList() {
       </div>
       <div className="flex flex-col sm:flex-row gap-2 mb-6">
           <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                   placeholder="Search notes..."
                   className="pl-10 w-full"
@@ -167,7 +167,7 @@ export function NoteList() {
           </Select>
           <Link href="/notes/new" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto" aria-label="Add New Note">
-                  <NotebookPen className="h-4 w-4 mr-2" />
+                  <NotebookPen aria-hidden className="h-4 w-4 mr-2" />
                   Add New Note
               </Button>
           </Link>
@@ -192,7 +192,7 @@ export function NoteList() {
         ) : (
           !isLoading && (
             <div className="text-center py-20 text-muted-foreground flex flex-col items-center gap-2 border border-dashed rounded-lg">
-              <Info className="h-8 w-8"/>
+              <Info aria-hidden className="h-8 w-8"/>
               {notes && notes.length === 0 && !hasFiltersApplied ? (
                  <>
                   <p className="font-medium text-lg mt-2">No notes yet!</p>
@@ -211,4 +211,3 @@ export function NoteList() {
     </>
   );
 }
-

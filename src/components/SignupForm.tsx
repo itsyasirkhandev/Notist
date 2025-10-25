@@ -84,10 +84,14 @@ export function SignupForm({ setView }: SignupFormProps) {
         router.push('/');
     } catch (error: any) {
         console.error("Google sign in error", error);
+        let description = "An unexpected error occurred during Google sign-in.";
+        if (error.code === 'auth/account-exists-with-different-credential') {
+            description = "An account with this email already exists. Please sign in with the original method (e.g., email and password).";
+        }
         toast({
             variant: "destructive",
             title: "Google Sign-In Failed",
-            description: error.message || "An unexpected error occurred during Google sign-in.",
+            description: description,
         });
     } finally {
         setIsSubmitting(false);
@@ -132,7 +136,8 @@ export function SignupForm({ setView }: SignupFormProps) {
                       className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:bg-transparent"
                       onClick={() => setShowPassword(prev => !prev)}
                     >
-                      {showPassword ? <EyeOff /> : <Eye />}
+                      {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                      <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
                     </Button>
                   </div>
                   <FormMessage />

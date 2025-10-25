@@ -136,7 +136,8 @@ export function LoginForm({ setView }: LoginFormProps) {
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:bg-transparent"
                         onClick={() => setShowPassword(prev => !prev)}
                         >
-                        {showPassword ? <EyeOff /> : <Eye />}
+                        {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                        <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
                         </Button>
                     </div>
                     <FormMessage />

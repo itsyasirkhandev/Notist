@@ -10,9 +10,10 @@ interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   isFullScreen: boolean;
+  ariaLabel?: string;
 }
 
-export function RichTextEditor({ value, onChange, isFullScreen }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Rich text editor" }: RichTextEditorProps) {
   return (
     <div className={cn(
         "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
@@ -21,6 +22,16 @@ export function RichTextEditor({ value, onChange, isFullScreen }: RichTextEditor
       <CKEditor
         editor={ClassicEditor}
         data={value}
+        onReady={editor => {
+            if (editor) {
+                editor.editing.view.change(writer => {
+                    const viewEditable = editor.editing.view.document.getRoot();
+                    if (viewEditable) {
+                       writer.setAttribute('aria-label', ariaLabel, viewEditable);
+                    }
+                });
+            }
+        }}
         onChange={(event, editor) => {
           const data = editor.getData();
           onChange(data);
