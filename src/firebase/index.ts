@@ -23,7 +23,7 @@ export function getSdks(firebaseApp: FirebaseApp) {
   if (!firestoreInstance) {
     try {
       firestoreInstance = initializeFirestore(firebaseApp, {
-        cache: persistentLocalCache(),
+        localCache: persistentLocalCache(),
       });
     } catch (e) {
       // If initialization fails (e.g., already initialized without these options),
