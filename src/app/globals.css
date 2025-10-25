@@ -109,6 +109,10 @@
   }
 }
 
+.ck.ck-editor__editable_inline {
+  min-height: 40vh;
+}
+
 .ck.ck-powered-by {
   display: none !important;
 }
