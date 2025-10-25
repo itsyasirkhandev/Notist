@@ -1,9 +1,10 @@
+
 'use client';
 
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, indexedDBLocalCache } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache } from 'firebase/firestore';
 
 // IMPORTANT: The following function has been modified to enable Firestore offline persistence.
 export function initializeFirebase() {
@@ -24,7 +25,7 @@ export function getSdks(firebaseApp: FirebaseApp) {
     firebaseApp,
     auth: getAuth(firebaseApp),
     firestore: initializeFirestore(firebaseApp, {
-      cache: indexedDBLocalCache(),
+      cache: persistentLocalCache(),
     }),
   };
 }
