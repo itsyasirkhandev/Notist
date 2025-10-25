@@ -4,7 +4,6 @@
 import { Auth } from '@/components/Auth';
 import { Loader } from '@/components/Loader';
 import { NoteList } from '@/components/NoteList';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -40,7 +39,6 @@ export default function Home() {
               Notist
             </h1>
             <div className="flex items-center gap-4">
-              <ThemeToggle />
               <Auth />
             </div>
         </div>

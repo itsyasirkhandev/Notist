@@ -4,18 +4,8 @@ import { useEffect, useState } from 'react';
 
 export default function OfflineWarning() {
     const isOnline = useOnlineStatus();
-    const [show, setShow] = useState(false);
 
-    useEffect(() => {
-        if (!isOnline) {
-            const timer = setTimeout(() => setShow(true), 3000); // delay of 3 seconds
-            return () => clearTimeout(timer);
-        } else {
-            setShow(false);
-        }
-    }, [isOnline]);
-
-    if (!show) {
+    if (isOnline) {
         return null;
     }
 

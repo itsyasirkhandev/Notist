@@ -48,40 +48,6 @@
     --tracking-normal: 0.5px;
   }
 
-  .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 98%;
-    --chart-1: 0 0% 93.7255%;
-    --chart-2: 0 0% 81.5686%;
-    --chart-3: 0 0% 69.0196%;
-    --chart-4: 0 0% 56.4706%;
-    --chart-5: 0 0% 43.9216%;
-    --sidebar: 0 0% 12.9412%;
-    --sidebar-foreground: 0 0% 86.2745%;
-    --sidebar-primary: 0 0% 69.0196%;
-    --sidebar-primary-foreground: 0 0% 12.9412%;
-    --sidebar-accent: 0 0% 87.8431%;
-    --sidebar-accent-foreground: 0 0% 20%;
-    --sidebar-border: 0 0% 30.9804%;
-    --sidebar-ring: 0 0% 75.2941%;
-  }
 }
 
 @layer base {
@@ -99,12 +65,6 @@
   }
   .prose ol>li::marker {
     font-size: inherit;
-    color: inherit;
-  }
-  .dark .prose ul>li::marker {
-    color: inherit;
-  }
-  .dark .prose ol>li::marker {
     color: inherit;
   }
 }
