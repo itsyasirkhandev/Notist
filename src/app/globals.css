@@ -109,14 +109,19 @@
   }
 }
 
+.ck.ck-editor {
+  @apply flex flex-col h-full;
+}
+
+.ck.ck-editor__main {
+  @apply flex-grow overflow-y-auto;
+}
+
 .ck.ck-editor__editable_inline {
+  @apply overflow-y-auto;
   min-height: 40vh;
 }
 
 .ck.ck-powered-by {
   display: none !important;
-}
-
-.ck.ck-editor__main, .ck.ck-editor__editable {
-  height: 100%;
 }

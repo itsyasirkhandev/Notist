@@ -17,7 +17,6 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Use 'f' key to toggle fullscreen, but not when user is typing in an input.
       if (event.key.toLowerCase() === 'f') {
         const target = event.target as HTMLElement;
         if (target.tagName.toLowerCase() === 'input' || target.tagName.toLowerCase() === 'textarea' || target.isContentEditable) {
@@ -36,8 +35,8 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
 
   return (
     <div className={cn(
-      "relative min-h-[40vh]",
-      isFullScreen && "fixed inset-0 z-50 bg-background p-4 flex flex-col"
+      "relative min-h-[40vh] flex flex-col", // Use flexbox to control height
+      isFullScreen && "fixed inset-0 z-50 bg-background p-4"
     )}>
        <Button 
         variant="ghost" 
@@ -53,7 +52,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       </Button>
       <div className={cn(
         "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 flex-grow flex flex-col",
-        isFullScreen ? "h-full" : ""
+         // The height will be controlled by the parent flex container
       )}>
         <CKEditor
           editor={ClassicEditor}
