@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tag, X, Maximize, Minimize } from "lucide-react";
-import React, { useState, useEffect, KeyboardEvent, useCallback } from "react";
+import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
@@ -130,7 +130,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   }, [savingStatus]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key.toLowerCase() === 'f' && !event.isComposing) {
         const target = event.target as HTMLElement;
         if (target.tagName.toLowerCase() === 'input' || target.tagName.toLowerCase() === 'textarea' || target.isContentEditable) {
@@ -158,7 +158,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   }, [isFullScreen]);
 
 
-  const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleTagInputKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       const newTag = tagInput.trim();
@@ -183,21 +183,15 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
       isFullScreen && "fixed inset-0 z-50 bg-background max-w-none"
     )}>
       <Card className={cn("shadow-lg border-none", isFullScreen && "h-full flex flex-col border-0 shadow-none rounded-none")}>
-        <div className={cn("flex items-center justify-end px-6 pt-4 h-8 text-sm text-muted-foreground transition-opacity duration-500", !isFullScreen && "opacity-100")}>
+        <div className={cn("flex items-center justify-end px-6 pt-4 text-sm text-muted-foreground transition-opacity duration-500", isFullScreen ? "h-12" : "h-8")}>
             <div className="flex-1">
-              {isFullScreen && (
+              {(isFullScreen || savingStatus !== 'idle') && (
                 <div className="text-sm text-muted-foreground transition-opacity duration-500 opacity-100">
                   {savingStatus === 'saving' && 'Saving...'}
                   {savingStatus === 'saved' && 'All changes saved'}
                 </div>
               )}
             </div>
-            {!isFullScreen && (
-              <>
-                {savingStatus === 'saving' && 'Saving...'}
-                {savingStatus === 'saved' && 'All changes saved'}
-              </>
-            )}
             <Button 
                 variant="ghost" 
                 size="icon" 
@@ -208,7 +202,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
                 <span className="sr-only">{isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}</span>
             </Button>
         </div>
-        <CardContent className={cn("space-y-4 p-4 md:p-6 pt-0", isFullScreen && "flex-grow flex flex-col p-2 md:p-4")}>
+        <CardContent className={cn("space-y-4 p-4 md:p-6 pt-0", isFullScreen && "flex-grow flex flex-col p-2 md:p-4 min-h-0")}>
           <div className="space-y-2 p-2">
             <Label htmlFor="title" className="sr-only">Title</Label>
             <Input
@@ -219,11 +213,13 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
               className="text-2xl font-bold border-none shadow-none px-2 h-auto"
             />
           </div>
-          <RichTextEditor 
-            value={content} 
-            onChange={setContent} 
-            isFullScreen={isFullScreen}
-          />
+          <div className={cn("relative", isFullScreen && "flex-grow min-h-0 overflow-y-auto")}>
+            <RichTextEditor 
+              value={content} 
+              onChange={setContent} 
+              isFullScreen={isFullScreen}
+            />
+          </div>
           <div className={cn("space-y-2", isFullScreen && "hidden")}>
             <Label htmlFor="tags" className="sr-only">Tags</Label>
             <div className="flex items-center gap-2 rounded-md border border-input px-3 py-1">

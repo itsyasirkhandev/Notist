@@ -16,7 +16,7 @@ export function RichTextEditor({ value, onChange, isFullScreen }: RichTextEditor
   return (
     <div className={cn(
         "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-        isFullScreen ? "flex-grow flex flex-col" : "relative"
+        isFullScreen ? "h-full flex flex-col" : "relative min-h-[50vh]"
         )}>
       <CKEditor
         editor={ClassicEditor}
