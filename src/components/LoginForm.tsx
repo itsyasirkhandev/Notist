@@ -61,10 +61,30 @@ export function LoginForm({ setView }: LoginFormProps) {
       router.push("/");
     } catch (error: any) {
       console.error("Sign in error", error);
+      let description = "Could not sign in. Please check your credentials.";
+      switch (error.code) {
+        case "auth/invalid-email":
+          description = "Invalid email address. Please check the format.";
+          break;
+        case "auth/user-disabled":
+          description = "Your account has been disabled. Please contact support.";
+          break;
+        case "auth/user-not-found":
+          description = "No account found with this email. Please sign up or check your email.";
+          break;
+        case "auth/wrong-password":
+          description = "Incorrect password. Please try again.";
+          break;
+        case "auth/invalid-credential":
+          description = "Invalid credentials. Please check your email and password.";
+          break;
+        default:
+          description = error.message || description;
+      }
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: error.message || "Could not sign in. Please check your credentials.",
+        title: "Sign In Failed",
+        description: description,
       });
     } finally {
         setIsSubmitting(false);
@@ -84,10 +104,33 @@ export function LoginForm({ setView }: LoginFormProps) {
         router.push('/');
     } catch (error: any) {
         console.error("Google sign in error", error);
+        let description = "An unexpected error occurred during Google sign-in.";
+        switch (error.code) {
+            case "auth/popup-closed-by-user":
+                description = "Google sign-in was cancelled.";
+                break;
+            case "auth/cancelled-popup-request":
+                description = "Multiple sign-in attempts. Please try again.";
+                break;
+            case "auth/account-exists-with-different-credential":
+                description = "An account with this email already exists. Please sign in with your original method (e.g., email and password).";
+                break;
+            case "auth/auth-domain-config-error":
+                description = "There is an issue with the authentication domain configuration. Please contact support.";
+                break;
+            case "auth/operation-not-allowed":
+                description = "Google sign-in is not enabled. Please contact support.";
+                break;
+            case "auth/unauthorized-domain":
+                description = "This domain is not authorized for Google sign-in. Please contact support.";
+                break;
+            default:
+                description = error.message || description;
+        }
         toast({
             variant: "destructive",
             title: "Google Sign-In Failed",
-            description: error.message || "An unexpected error occurred during Google sign-in.",
+            description: description,
         });
     } finally {
         setIsSubmitting(false);
