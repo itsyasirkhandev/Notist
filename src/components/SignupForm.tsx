@@ -61,10 +61,27 @@ export function SignupForm({ setView }: SignupFormProps) {
       router.push("/");
     } catch (error: any) {
       console.error("Sign up error", error);
+      let description = "Could not create account. Please try again.";
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          description = "This email address is already in use. Please log in or use a different email.";
+          break;
+        case "auth/invalid-email":
+          description = "Invalid email address. Please check the format.";
+          break;
+        case "auth/operation-not-allowed":
+          description = "Email/password accounts are not enabled. Please contact support.";
+          break;
+        case "auth/weak-password":
+          description = "The password is too weak. Please choose a stronger password.";
+          break;
+        default:
+          description = error.message || description;
+      }
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: error.message || "Could not create account. Please try again.",
+        title: "Sign Up Failed",
+        description: description,
       });
     } finally {
       setIsSubmitting(false);
