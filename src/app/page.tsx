@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-background font-body selection:bg-primary/20">
-      <header className='w-full border-b border-border'>
+      <header className='sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm'>
         <div className="w-full max-w-7xl mx-auto p-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold tracking-tight text-primary">
               Notist
