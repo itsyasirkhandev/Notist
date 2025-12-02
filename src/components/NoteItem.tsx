@@ -44,7 +44,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
   return (
     <li
       className={cn(
-        "group flex flex-col h-80 items-start rounded-lg border bg-card text-card-foreground transition-all break-inside-avoid-column mb-4 shadow-sm hover:shadow-md",
+        "group flex flex-col h-80 items-start rounded-lg border bg-card text-card-foreground transition-all shadow-sm hover:shadow-md",
         note.pinned && "border-primary/50 shadow-lg hover:shadow-xl"
       )}
     >

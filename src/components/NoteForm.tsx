@@ -6,22 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tag, X, Maximize, Minimize, WifiOff } from "lucide-react";
-import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback } from "react";
+import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
 import { doc, serverTimestamp, collection, addDoc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Loader } from "./Loader";
-import dynamic from 'next/dynamic';
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { useOnlineStatus } from "@/hooks/useOnlineStatus"; // Import the hook
-
-const RichTextEditor = dynamic(() => import('./RichTextEditor').then(mod => mod.RichTextEditor), {
-  ssr: false,
-  loading: () => <div className="flex items-center justify-center min-h-[250px]"><Loader /></div>,
-});
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { RichTextEditor } from "./RichTextEditor";
 
 
 type SavingStatus = "idle" | "saving" | "saved";
@@ -42,6 +37,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [savingStatus, setSavingStatus] = useState<SavingStatus>("idle");
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const hasLoadedInitialData = useRef(false);
 
   const noteRef = useMemoFirebase(() => {
     if (!noteId || !user || !firestore) return null;
@@ -51,12 +47,17 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const { data: note, isLoading: isNoteLoading } = useDoc<Note>(noteRef);
 
   useEffect(() => {
-    if (note) {
+    hasLoadedInitialData.current = false;
+  }, [noteId]);
+
+  useEffect(() => {
+    if (note && !hasLoadedInitialData.current) {
       setTitle(note.title);
       setContent(note.content);
       setTags(note.tags || []);
+      hasLoadedInitialData.current = true;
       setIsInitialLoad(false);
-    } else if (!isNoteLoading) {
+    } else if (!isNoteLoading && !note) {
       setIsInitialLoad(false);
     }
   }, [note, isNoteLoading]);
