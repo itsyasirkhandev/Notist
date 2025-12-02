@@ -4,20 +4,26 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Info, NotebookPen, Search, MailWarning } from "lucide-react";
+import { Info, Search, MailWarning } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import NoteItem from "./NoteItem";
-import Link from "next/link";
+import NoteCard from "./NoteCard";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
 import { collection, doc, orderBy, query, serverTimestamp } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
-import { deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
 import { Loader } from "./Loader";
+import { NoteListSkeleton } from "./NoteItemSkeleton";
+import { EmptyState } from "./EmptyState";
+import { motion } from "framer-motion";
 
-export function NoteList() {
+interface NoteListProps {
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
+}
+
+export function NoteList({ searchInputRef }: NoteListProps) {
   const { user, auth, firestore, isUserLoading } = useFirebase();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,74 +144,73 @@ export function NoteList() {
   
   const hasFiltersApplied = searchTerm.trim() !== "" || filterTag !== "all";
 
+  const clearFilters = () => {
+    setSearchTerm("");
+    setFilterTag("all");
+  };
+
   return (
     <>
       <div className="mb-8">
         <h2 className="text-3xl font-bold tracking-tight">Your Notes</h2>
         <p className="text-muted-foreground">Manage your notes or create a new one.</p>
       </div>
-      <div className="flex flex-col sm:flex-row gap-2 mb-6">
-          <div className="relative w-full">
-              <Search aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                  placeholder="Search notes..."
-                  className="pl-10 w-full"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-              />
-          </div>
-          <Select value={filterTag} onValueChange={setFilterTag}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by tag" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
-              {allTags.map(tag => (
-                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Link href="/notes/new" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto" aria-label="Add New Note">
-                  <NotebookPen aria-hidden className="h-4 w-4 mr-2" />
-                  Add New Note
-              </Button>
-          </Link>
+      
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="relative flex-1">
+          <Search aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            ref={searchInputRef}
+            placeholder="Search notes..."
+            className="pl-10 w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <Select value={filterTag} onValueChange={setFilterTag}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter by tag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Tags</SelectItem>
+            {allTags.map(tag => (
+              <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
       <div>
-        {isLoading && (
-          <div className="text-center py-10">
-            <Loader />
-          </div>
-        )}
-        {!isLoading && filteredNotes.length > 0 ? (
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredNotes.map((note) => (
-              <NoteItem
+        {isLoading && <NoteListSkeleton />}
+        
+        {!isLoading && filteredNotes.length > 0 && (
+          <motion.ul 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: { opacity: 0 },
+              show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+            }}
+          >
+            {filteredNotes.map((note, index) => (
+              <NoteCard
                 key={note.id}
                 note={note}
+                index={index}
                 onDelete={handleDeleteNote}
                 onTogglePin={handleTogglePin}
               />
             ))}
-          </ul>
-        ) : (
-          !isLoading && (
-            <div className="text-center py-20 text-muted-foreground flex flex-col items-center gap-2 border border-dashed rounded-lg">
-              <Info aria-hidden className="h-8 w-8"/>
-              {notes && notes.length === 0 && !hasFiltersApplied ? (
-                 <>
-                  <p className="font-medium text-lg mt-2">No notes yet!</p>
-                  <p className="text-sm">Click "Add New Note" to get started.</p>
-                </>
-              ) : (
-                <>
-                  <p className="font-medium text-lg mt-2">No notes match your filters!</p>
-                  <p className="text-sm">Try a different search or filter.</p>
-                </>
-              )}
-            </div>
-          )
+          </motion.ul>
+        )}
+        
+        {!isLoading && filteredNotes.length === 0 && (
+          <EmptyState 
+            type={notes && notes.length === 0 && !hasFiltersApplied ? "no-notes" : "no-results"}
+            userName={user?.displayName?.split(' ')[0]}
+            onClearFilters={hasFiltersApplied ? clearFilters : undefined}
+          />
         )}
       </div>
     </>

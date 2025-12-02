@@ -1,16 +1,24 @@
 
 'use client';
 
-import { Auth } from '@/components/Auth';
 import { Loader } from '@/components/Loader';
 import { NoteList } from '@/components/NoteList';
+import { Header } from '@/components/Header';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = useCallback(() => {
+    searchInputRef.current?.focus();
+  }, []);
+  
+  useKeyboardShortcuts({ onSearch: handleSearch });
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -32,22 +40,13 @@ export default function Home() {
 
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen bg-background font-body selection:bg-primary/20">
-      <header className='sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm'>
-        <div className="w-full max-w-7xl mx-auto p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold tracking-tight text-primary">
-              Notist
-            </h1>
-            <div className="flex items-center gap-4">
-              <Auth />
-            </div>
-        </div>
-      </header>
-      <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
+    <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20">
+      <Header onSearchClick={handleSearch} />
+      <div className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
         <main>
-          <NoteList />
+          <NoteList searchInputRef={searchInputRef} />
         </main>
-        <footer className="text-center mt-12 text-sm text-muted-foreground">
+        <footer className="text-center mt-12 py-6 text-sm text-muted-foreground">
           <p>Organize your thoughts, one note at a time.</p>
         </footer>
       </div>

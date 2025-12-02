@@ -77,7 +77,7 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
   // Only set content on initial mount, not on every value change
   useEffect(() => {
     if (editor && !hasInitialized.current && value) {
-      editor.commands.setContent(value, false);
+      editor.commands.setContent(value, { emitUpdate: false });
       hasInitialized.current = true;
     }
   }, [editor, value]);

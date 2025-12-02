@@ -11,7 +11,7 @@ import {
   PinOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { memo, useMemo } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +26,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 
 interface NoteItemProps {
   note: Note;
@@ -33,13 +34,17 @@ interface NoteItemProps {
   onTogglePin: (id: string, currentPinStatus: boolean) => void;
 }
 
-const NoteItem: React.FC<NoteItemProps> = ({
+const NoteItem: React.FC<NoteItemProps> = memo(({
   note,
   onDelete,
   onTogglePin,
 }) => {
-
   const createdDate = note.createdAt ? format(note.createdAt.toDate(), 'MMM d, yyyy') : 'No date';
+  
+  const sanitizedContent = useMemo(() => {
+    if (typeof window === 'undefined') return note.content;
+    return DOMPurify.sanitize(note.content);
+  }, [note.content]);
 
   return (
     <li
@@ -52,7 +57,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
         <div className="p-6 relative h-full">
           <div 
             className="prose prose-sm dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: note.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
           <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-card to-transparent" />
         </div>
@@ -128,6 +133,8 @@ const NoteItem: React.FC<NoteItemProps> = ({
       </div>
     </li>
   );
-};
+});
+
+NoteItem.displayName = 'NoteItem';
 
 export default NoteItem;

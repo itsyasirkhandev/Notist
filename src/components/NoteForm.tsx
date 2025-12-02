@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { RichTextEditor } from "./RichTextEditor";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 
 type SavingStatus = "idle" | "saving" | "saved";
@@ -112,6 +113,8 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
     }
 
   }, [title, content, tags, user, firestore, noteId, router, isInitialLoad, note]);
+
+  useKeyboardShortcuts({ onSave: saveNote });
 
   useEffect(() => {
     if (isInitialLoad) return;
