@@ -5,8 +5,8 @@ import { Note } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Tag, X, Maximize, Minimize, WifiOff } from "lucide-react";
-import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback, useRef } from "react";
+import { Tag, X, Maximize, Minimize, WifiOff, FileText } from "lucide-react";
+import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
@@ -18,6 +18,12 @@ import { cn } from "@/lib/utils";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { RichTextEditor } from "./RichTextEditor";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 
 type SavingStatus = "idle" | "saving" | "saved";
@@ -116,6 +122,15 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
 
   useKeyboardShortcuts({ onSave: saveNote });
 
+  const wordCount = useMemo(() => {
+    const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return text ? text.split(' ').filter(word => word.length > 0).length : 0;
+  }, [content]);
+
+  const charCount = useMemo(() => {
+    return content.replace(/<[^>]*>/g, '').length;
+  }, [content]);
+
   useEffect(() => {
     if (isInitialLoad) return;
 
@@ -184,81 +199,146 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   }
 
   return (
-    <div className={cn(
-      "w-full max-w-4xl mx-auto",
-      isFullScreen && "fixed inset-0 z-50 bg-background max-w-none"
-    )}>
-      <Card className={cn("shadow-lg border-none", isFullScreen && "h-full flex flex-col border-0 shadow-none rounded-none")}>
-        <div className={cn("flex items-center justify-end px-6 pt-4 text-sm text-muted-foreground transition-opacity duration-500", isFullScreen ? "h-12" : "h-8")}>
-            <div className="flex-1 flex items-center gap-4" role="status" aria-live="polite">
+    <TooltipProvider>
+      <div className={cn(
+        "w-full max-w-4xl mx-auto transition-all duration-300 ease-in-out",
+        isFullScreen && "fixed inset-0 z-50 bg-background max-w-none"
+      )}>
+        <Card className={cn(
+          "shadow-sm border border-border/50 transition-all duration-300",
+          isFullScreen && "h-full flex flex-col border-0 shadow-none rounded-none"
+        )}>
+          {/* Header bar with status and actions */}
+          <div className={cn(
+            "flex items-center justify-between px-4 md:px-6 pt-3 pb-2 border-b border-border/30",
+            isFullScreen && "border-b-0 bg-muted/30"
+          )}>
+            <div className="flex items-center gap-3" role="status" aria-live="polite">
               {!isOnline && (
-                  <div className="flex items-center gap-2 text-destructive font-medium">
-                      <WifiOff className="h-4 w-4" />
-                      <span>Offline Mode</span>
-                  </div>
-              )}
-              {(isFullScreen || savingStatus !== 'idle') && (
-                <div className="text-sm text-muted-foreground transition-opacity duration-500 opacity-100">
-                  {savingStatus === 'saving' && 'Saving...'}
-                  {savingStatus === 'saved' && (isOnline ? 'All changes saved' : 'Saved locally')}
+                <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-2 py-1 rounded-full">
+                  <WifiOff className="h-3 w-3" />
+                  <span>Offline</span>
                 </div>
               )}
+              <div className={cn(
+                "text-xs text-muted-foreground transition-all duration-300",
+                savingStatus === 'idle' && !isFullScreen && "opacity-0"
+              )}>
+                {savingStatus === 'saving' && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    Saving...
+                  </span>
+                )}
+                {savingStatus === 'saved' && (
+                  <span className="text-green-600 dark:text-green-500">
+                    {isOnline ? 'Saved' : 'Saved locally'}
+                  </span>
+                )}
+              </div>
             </div>
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 -mr-2"
-                onClick={() => setIsFullScreen(prev => !prev)}
-            >
-                {isFullScreen ? <Minimize aria-hidden="true" /> : <Maximize aria-hidden="true" />}
-                <span className="sr-only">{isFullScreen ? 'Exit fullscreen' : 'Enter fullscreen'}</span>
-            </Button>
-        </div>
-        <CardContent className={cn("space-y-4 p-4 md:p-6 pt-0", isFullScreen && "flex-grow flex flex-col p-2 md:p-4 min-h-0")}>
-          <div className="space-y-2 p-2">
-            <Label htmlFor="title" className="sr-only">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Note title..."
-              className="text-2xl font-bold border-none shadow-none px-2 h-auto"
-            />
+            <div className="flex items-center gap-2">
+              {/* Word count - always visible in fullscreen, hover tooltip on normal */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className={cn(
+                    "flex items-center gap-1.5 text-xs text-muted-foreground cursor-default",
+                    isFullScreen ? "opacity-100" : "opacity-70 hover:opacity-100"
+                  )}>
+                    <FileText className="h-3 w-3" />
+                    <span>{wordCount} words</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>{charCount} characters</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                    onClick={() => setIsFullScreen(prev => !prev)}
+                  >
+                    {isFullScreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  {isFullScreen ? 'Exit fullscreen (Esc)' : 'Fullscreen (F)'}
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
-          <div className={cn("relative", isFullScreen && "flex-grow min-h-0 overflow-y-auto")}>
-            <RichTextEditor 
-              value={content} 
-              onChange={setContent} 
-              isFullScreen={isFullScreen}
-              ariaLabel="Note content"
-            />
-          </div>
-          <div className={cn("space-y-2", isFullScreen && "hidden")}>
-            <Label htmlFor="tags" className="sr-only">Tags</Label>
-            <div className="flex items-center gap-2 rounded-md border border-input px-3 py-1">
-                <Tag aria-hidden="true" className="h-4 w-4 text-muted-foreground"/>
-                <div className="flex gap-1 flex-wrap">
-                {tags.map(tag => (
-                    <Badge key={tag} variant="secondary">
-                        {tag}
-                        <button onClick={() => handleRemoveTag(tag)} className="ml-1 rounded-full hover:bg-destructive/20 p-0.5" aria-label={`Remove ${tag} tag`}>
-                            <X aria-hidden="true" className="h-3 w-3" />
-                        </button>
+
+          <CardContent className={cn(
+            "space-y-4 p-4 md:p-6 pt-4",
+            isFullScreen && "flex-grow flex flex-col p-3 md:p-4 min-h-0"
+          )}>
+            {/* Title input */}
+            <div className="space-y-1">
+              <Label htmlFor="title" className="sr-only">Title</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Note title..."
+                className="text-xl md:text-2xl font-semibold border-none shadow-none px-1 h-auto bg-transparent focus-visible:ring-0 placeholder:text-muted-foreground/50"
+              />
+            </div>
+
+            {/* Editor */}
+            <div className={cn(
+              "relative",
+              isFullScreen && "flex-grow min-h-0 overflow-y-auto"
+            )}>
+              <RichTextEditor 
+                value={content} 
+                onChange={setContent} 
+                isFullScreen={isFullScreen}
+                ariaLabel="Note content"
+              />
+            </div>
+
+            {/* Tags section */}
+            <div className={cn(
+              "space-y-2 pt-2 border-t border-border/30",
+              isFullScreen && "hidden"
+            )}>
+              <Label htmlFor="tags" className="sr-only">Tags</Label>
+              <div className="flex items-center gap-2 rounded-lg border border-input/50 bg-muted/30 px-3 py-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 transition-all">
+                <Tag aria-hidden="true" className="h-4 w-4 text-muted-foreground shrink-0"/>
+                <div className="flex gap-1.5 flex-wrap items-center">
+                  {tags.map(tag => (
+                    <Badge 
+                      key={tag} 
+                      variant="secondary"
+                      className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      {tag}
+                      <button 
+                        onClick={() => handleRemoveTag(tag)} 
+                        className="ml-1 rounded-full hover:bg-destructive/20 p-0.5 transition-colors" 
+                        aria-label={`Remove ${tag} tag`}
+                      >
+                        <X aria-hidden="true" className="h-3 w-3" />
+                      </button>
                     </Badge>
-                ))}
-                </div>
-                <Input
+                  ))}
+                  <Input
                     id="tags"
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleTagInputKeyDown}
-                    placeholder="Add tags..."
-                    className="flex-grow h-8 border-none shadow-none p-0"
-                />
+                    placeholder={tags.length === 0 ? "Add tags..." : ""}
+                    className="flex-grow min-w-[80px] h-6 border-none shadow-none p-0 bg-transparent focus-visible:ring-0 text-sm"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-    </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </TooltipProvider>
   );
 }

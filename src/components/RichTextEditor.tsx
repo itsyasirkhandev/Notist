@@ -92,11 +92,14 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
   if (!editor) {
     return (
       <div className={cn(
-        "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background",
+        "prose dark:prose-invert max-w-none w-full rounded-lg border border-input/50 bg-background",
         isFullScreen ? "h-full flex flex-col" : "min-h-[50vh]"
       )}>
         <div className="flex items-center justify-center min-h-[200px] text-muted-foreground">
-          Loading editor...
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-sm">Loading editor...</span>
+          </div>
         </div>
       </div>
     );
@@ -104,8 +107,8 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
 
   return (
     <div className={cn(
-      "prose dark:prose-invert max-w-none w-full rounded-md border border-input bg-background overflow-hidden",
-      "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+      "prose dark:prose-invert max-w-none w-full rounded-lg border border-input/50 bg-background overflow-hidden transition-all duration-200",
+      "focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20",
       isFullScreen ? "h-full flex flex-col" : "min-h-[50vh]"
     )}>
       <EditorToolbar editor={editor} />
