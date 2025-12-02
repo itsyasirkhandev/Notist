@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { NotebookPen, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { Auth } from "./Auth";
 import { useUser } from "@/firebase";
 import { cn } from "@/lib/utils";
+import { Logo } from "./Logo";
 
 interface HeaderProps {
   onSearchClick?: () => void;
@@ -22,12 +23,7 @@ export function Header({ onSearchClick, className }: HeaderProps) {
       className
     )}>
       <div className="w-full max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-primary-foreground">
-            <NotebookPen className="h-4 w-4" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">Notist</span>
-        </Link>
+        <Logo href={user ? "/dashboard" : "/"} />
 
         <div className="flex items-center gap-2">
           {user && (

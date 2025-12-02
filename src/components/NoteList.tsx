@@ -17,7 +17,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader } from "./Loader";
 import { NoteListSkeleton } from "./NoteItemSkeleton";
 import { EmptyState } from "./EmptyState";
-import { motion } from "framer-motion";
 
 interface NoteListProps {
   searchInputRef?: React.RefObject<HTMLInputElement | null>;
@@ -151,9 +150,9 @@ export function NoteList({ searchInputRef }: NoteListProps) {
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight">Your Notes</h2>
-        <p className="text-muted-foreground">Manage your notes or create a new one.</p>
+      <div className="mb-8 min-h-[68px]">
+        <h2 className="text-3xl font-bold tracking-tight leading-tight">Your Notes</h2>
+        <p className="text-muted-foreground leading-normal">Manage your notes or create a new one.</p>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -184,25 +183,16 @@ export function NoteList({ searchInputRef }: NoteListProps) {
         {isLoading && <NoteListSkeleton />}
         
         {!isLoading && filteredNotes.length > 0 && (
-          <motion.ul 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: { opacity: 0 },
-              show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-            }}
-          >
-            {filteredNotes.map((note, index) => (
+          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredNotes.map((note) => (
               <NoteCard
                 key={note.id}
                 note={note}
-                index={index}
                 onDelete={handleDeleteNote}
                 onTogglePin={handleTogglePin}
               />
             ))}
-          </motion.ul>
+          </ul>
         )}
         
         {!isLoading && filteredNotes.length === 0 && (

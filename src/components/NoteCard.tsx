@@ -8,6 +8,8 @@ import {
   MoreVertical,
   Pin,
   PinOff,
+  Calendar,
+  ArrowUpRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React, { memo, useMemo } from "react";
@@ -27,20 +29,17 @@ import { Badge } from "./ui/badge";
 import Link from "next/link";
 import { format } from "date-fns";
 import DOMPurify from "dompurify";
-import { motion } from "framer-motion";
 
 interface NoteCardProps {
   note: Note;
   onDelete: (id: string) => void;
   onTogglePin: (id: string, currentPinStatus: boolean) => void;
-  index?: number;
 }
 
 const NoteCard: React.FC<NoteCardProps> = memo(({
   note,
   onDelete,
   onTogglePin,
-  index = 0,
 }) => {
   const formattedDate = note.updatedAt 
     ? format(note.updatedAt.toDate(), 'MMM d, yyyy') 
@@ -54,73 +53,78 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
   }, [note.content]);
 
   const plainTextContent = useMemo(() => {
-    const div = document.createElement('div');
-    div.innerHTML = sanitizedContent;
-    return div.textContent || div.innerText || '';
+    return sanitizedContent
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }, [sanitizedContent]);
 
   return (
-    <motion.li
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      whileHover={{ y: -4 }}
+    <li
       className="group"
+      style={{ contain: 'layout style paint' }}
     >
       <div
         className={cn(
-          "relative flex flex-col h-72 rounded-xl border bg-card text-card-foreground transition-all duration-200",
-          "shadow-sm hover:shadow-lg",
-          note.pinned && "ring-2 ring-primary/20 border-primary/30"
+          "relative flex flex-col h-[280px] rounded-2xl border bg-card text-card-foreground overflow-hidden",
+          "shadow-sm hover:shadow-xl transition-all duration-300 ease-out",
+          "hover:border-primary/30 hover:-translate-y-1",
+          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+          "hover:before:opacity-100",
+          note.pinned && "ring-2 ring-primary/30 border-primary/40 bg-gradient-to-br from-primary/5 to-transparent"
         )}
       >
+        {/* Pinned indicator */}
         {note.pinned && (
-          <div className="absolute -top-2 -right-2 z-10">
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-primary text-primary-foreground shadow-md">
-              <Pin className="h-3 w-3" />
+          <div className="absolute top-3 right-3 z-10">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/15 backdrop-blur-sm border border-primary/20">
+              <Pin className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-medium text-primary">Pinned</span>
             </div>
           </div>
         )}
 
-        <div className="p-4 pb-2 border-b border-border/50">
-          <div className="flex items-start justify-between gap-2">
-            <Link href={`/notes/${note.id}`} className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base truncate hover:text-primary transition-colors">
+        {/* Header */}
+        <div className="relative p-5 pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <Link href={`/notes/${note.id}`} className="flex-1 min-w-0 group/title">
+              <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover/title:text-primary transition-colors duration-200">
                 {note.title || "Untitled Note"}
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {formattedDate}
-              </p>
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                  className={cn(
+                    "h-8 w-8 rounded-full flex-shrink-0 transition-all duration-200",
+                    "opacity-0 group-hover:opacity-100",
+                    "hover:bg-primary/10 hover:text-primary"
+                  )}
                   aria-label={`Options for ${note.title || 'Untitled Note'}`}
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem onClick={() => onTogglePin(note.id, !!note.pinned)}>
                   {note.pinned ? (
                     <>
                       <PinOff className="mr-2 h-4 w-4" />
-                      Unpin
+                      Unpin note
                     </>
                   ) : (
                     <>
                       <Pin className="mr-2 h-4 w-4" />
-                      Pin
+                      Pin to top
                     </>
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href={`/notes/${note.id}`} className="flex items-center">
                     <Pencil className="mr-2 h-4 w-4" />
-                    Edit
+                    Edit note
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -128,10 +132,10 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
                   <AlertDialogTrigger asChild>
                     <DropdownMenuItem 
                       onSelect={(e) => e.preventDefault()} 
-                      className="text-destructive focus:text-destructive"
+                      className="text-destructive focus:text-destructive focus:bg-destructive/10"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      Delete note
                     </DropdownMenuItem>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -139,7 +143,7 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
                       <AlertDialogTitle>Delete this note?</AlertDialogTitle>
                       <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete
-                        "{note.title || 'Untitled Note'}".
+                        &ldquo;{note.title || 'Untitled Note'}&rdquo;.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -156,41 +160,71 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          
+          {/* Date with icon */}
+          <div className="flex items-center gap-1.5 mt-2 text-muted-foreground">
+            <Calendar className="h-3 w-3" />
+            <span className="text-xs">{formattedDate}</span>
+          </div>
         </div>
 
+        {/* Content */}
         <Link 
           href={`/notes/${note.id}`} 
-          className="flex-1 overflow-hidden relative"
+          className="flex-1 overflow-hidden relative px-5"
           aria-label={`View ${note.title || 'Untitled Note'}`}
         >
-          <div className="p-4 pt-3 h-full">
-            <p className="text-sm text-muted-foreground line-clamp-5 leading-relaxed">
-              {plainTextContent || "No content yet..."}
-            </p>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-card to-transparent pointer-events-none" />
+          <p className="text-sm text-muted-foreground/80 line-clamp-4 leading-relaxed">
+            {plainTextContent || "Start writing your thoughts..."}
+          </p>
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none" />
         </Link>
 
-        {note.tags && note.tags.length > 0 && (
-          <div className="px-4 pb-3 pt-1 flex gap-1.5 flex-wrap">
-            {note.tags.slice(0, 3).map(tag => (
-              <Badge 
-                key={tag} 
-                variant="secondary" 
-                className="text-xs px-2 py-0 h-5 bg-primary/10 text-primary hover:bg-primary/20"
-              >
-                {tag}
-              </Badge>
-            ))}
-            {note.tags.length > 3 && (
-              <Badge variant="outline" className="text-xs px-2 py-0 h-5">
-                +{note.tags.length - 3}
-              </Badge>
+        {/* Footer with tags and action */}
+        <div className="relative p-4 pt-2 flex items-end justify-between gap-3">
+          {/* Tags */}
+          <div className="flex-1 min-w-0">
+            {note.tags && note.tags.length > 0 ? (
+              <div className="flex gap-1.5 flex-wrap">
+                {note.tags.slice(0, 2).map(tag => (
+                  <Badge 
+                    key={tag} 
+                    variant="secondary" 
+                    className="text-[10px] px-2 py-0.5 h-5 rounded-full bg-secondary/80 hover:bg-secondary transition-colors"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+                {note.tags.length > 2 && (
+                  <Badge 
+                    variant="outline" 
+                    className="text-[10px] px-2 py-0.5 h-5 rounded-full"
+                  >
+                    +{note.tags.length - 2}
+                  </Badge>
+                )}
+              </div>
+            ) : (
+              <span className="text-[10px] text-muted-foreground/50">No tags</span>
             )}
           </div>
-        )}
+          
+          {/* Open button */}
+          <Link 
+            href={`/notes/${note.id}`}
+            className={cn(
+              "flex items-center justify-center h-8 w-8 rounded-full",
+              "bg-primary/10 text-primary",
+              "opacity-0 group-hover:opacity-100 transition-all duration-200",
+              "hover:bg-primary hover:text-primary-foreground hover:scale-110"
+            )}
+            aria-label="Open note"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
-    </motion.li>
+    </li>
   );
 });
 

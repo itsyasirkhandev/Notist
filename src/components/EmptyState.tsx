@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { NotebookPen, Search, FileX } from "lucide-react";
+import { NotebookPen, Search } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Logo } from "./Logo";
 
 interface EmptyStateProps {
   type: "no-notes" | "no-results";
@@ -23,7 +24,7 @@ export function EmptyState({ type, userName, onClearFilters }: EmptyStateProps) 
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl" />
           <div className="relative flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
-            <NotebookPen className="h-10 w-10 text-primary" />
+            <Logo showText={false} size="lg" />
           </div>
         </div>
         

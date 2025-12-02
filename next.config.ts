@@ -1,13 +1,25 @@
 import type {NextConfig} from 'next';
+import withPWAInit from 'next-pwa';
+
+const withPWA = withPWAInit({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+  fallbacks: {
+    document: '/offline.html',
+  },
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Turbopack configuration (top-level in Next.js 16)
+  turbopack: {
+    // Enable debug IDs for better debugging in development
+    debugIds: process.env.NODE_ENV === 'development',
+  },
   productionBrowserSourceMaps: false,
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   images: {
     remotePatterns: [
@@ -33,4 +45,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);

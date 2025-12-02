@@ -36,9 +36,13 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
       }),
       Underline,
       Link.configure({
-        openOnClick: false,
+        openOnClick: true,
+        autolink: true,
+        linkOnPaste: true,
         HTMLAttributes: {
           class: 'text-primary underline cursor-pointer',
+          rel: 'noopener noreferrer nofollow',
+          target: '_blank',
         },
       }),
       TaskList,

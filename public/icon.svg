@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#6366f1"/>
+  <!-- NotebookPen icon style -->
+  <g fill="none" stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Notebook -->
+    <path d="M144 112h224c17.7 0 32 14.3 32 32v224c0 17.7-14.3 32-32 32H144c-17.7 0-32-14.3-32-32V144c0-17.7 14.3-32 32-32z"/>
+    <!-- Binding -->
+    <line x1="192" y1="112" x2="192" y2="400"/>
+    <!-- Lines -->
+    <line x1="240" y1="176" x2="352" y2="176"/>
+    <line x1="240" y1="240" x2="320" y2="240"/>
+    <!-- Pen -->
+    <path d="M336 304l48-48c8-8 8-20 0-28l-12-12c-8-8-20-8-28 0l-48 48v40h40z"/>
+  </g>
+</svg>
