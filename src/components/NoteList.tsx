@@ -4,10 +4,11 @@
 import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Info, Search, MailWarning } from "lucide-react";
+import { Info, Search, MailWarning, Plus } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import NoteCard from "./NoteCard";
 import { Input } from "./ui/input";
+import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
 import { collection, doc, orderBy, query, serverTimestamp } from "firebase/firestore";
@@ -184,6 +185,18 @@ export function NoteList({ searchInputRef }: NoteListProps) {
         
         {!isLoading && filteredNotes.length > 0 && (
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+             {/* New "Ghost" Card */}
+             {!hasFiltersApplied && (
+              <li>
+                <Link href="/notes/new" className="flex flex-col items-center justify-center h-[280px] rounded-2xl border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/5 transition-all group">
+                  <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <span className="font-medium text-muted-foreground group-hover:text-primary">Create New Note</span>
+                </Link>
+              </li>
+            )}
+
             {filteredNotes.map((note) => (
               <NoteCard
                 key={note.id}

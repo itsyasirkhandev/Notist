@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from '@/lib/utils';
 import { Editor } from '@tiptap/react';
 import { Toggle } from '@/components/ui/toggle';
 import { Separator } from '@/components/ui/separator';
@@ -41,6 +42,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from 'react';
 
 interface EditorToolbarProps {
   editor: Editor | null;
@@ -107,13 +116,23 @@ function ToolbarButton({
 }
 
 export function EditorToolbar({ editor }: EditorToolbarProps) {
+  const [linkUrl, setLinkUrl] = useState('');
+  const [isLinkPopoverOpen, setIsLinkPopoverOpen] = useState(false);
+
   if (!editor) return null;
 
-  const addLink = () => {
-    const url = window.prompt('Enter URL:');
-    if (url) {
-      editor.chain().focus().setLink({ href: url }).run();
+  const setLink = () => {
+    if (linkUrl) {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
+      setLinkUrl('');
+      setIsLinkPopoverOpen(false);
     }
+  };
+
+  const openLinkPopover = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    setLinkUrl(previousUrl || '');
+    setIsLinkPopoverOpen(true);
   };
 
   const addTable = () => {
@@ -285,20 +304,61 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
 
         {/* Link & Table - hidden on mobile */}
         <div className="hidden md:flex items-center gap-0.5">
-          <ToolbarButton
-            pressed={editor.isActive('link')}
-            onPressedChange={() => {
-              if (editor.isActive('link')) {
-                editor.chain().focus().unsetLink().run();
-              } else {
-                addLink();
-              }
-            }}
-            tooltip={editor.isActive('link') ? "Remove Link" : "Add Link"}
-            shortcut="Ctrl+K"
-          >
-            {editor.isActive('link') ? <Unlink className="h-4 w-4" /> : <Link className="h-4 w-4" />}
-          </ToolbarButton>
+          <Popover open={isLinkPopoverOpen} onOpenChange={setIsLinkPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "h-8 w-8 p-0 hover:bg-muted transition-colors",
+                  editor.isActive('link') && "bg-primary/20 text-primary hover:bg-primary/30"
+                )}
+                onClick={openLinkPopover}
+              >
+                {editor.isActive('link') ? <Unlink className="h-4 w-4" /> : <Link className="h-4 w-4" />}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="start">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Add Link</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Enter the URL for the link.
+                  </p>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="url" className="sr-only">URL</Label>
+                  <Input
+                    id="url"
+                    placeholder="https://example.com"
+                    value={linkUrl}
+                    onChange={(e) => setLinkUrl(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setLink();
+                      }
+                    }}
+                  />
+                  <div className="flex justify-end gap-2">
+                    {editor.isActive('link') && (
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        onClick={() => {
+                          editor.chain().focus().unsetLink().run();
+                          setIsLinkPopoverOpen(false);
+                        }}
+                      >
+                        Unlink
+                      </Button>
+                    )}
+                    <Button size="sm" onClick={setLink}>Save</Button>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
           <ToolbarButton
             onClick={addTable}
             tooltip="Insert Table"
@@ -354,7 +414,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
                 <AlignRight className="h-4 w-4 mr-2" /> Align Right
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={addLink}>
+              <DropdownMenuItem onClick={openLinkPopover}>
                 <Link className="h-4 w-4 mr-2" /> Add Link
               </DropdownMenuItem>
               <DropdownMenuItem onClick={addTable}>

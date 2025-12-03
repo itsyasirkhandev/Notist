@@ -13,9 +13,11 @@ import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
+import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
 import { EditorToolbar } from './EditorToolbar';
+import { TableBubbleMenu } from './TableBubbleMenu';
 
 interface RichTextEditorProps {
   value: string;
@@ -64,6 +66,7 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
       Highlight.configure({
         multicolor: true,
       }),
+      BubbleMenuExtension,
     ],
     content: value,
     immediatelyRender: false,
@@ -116,6 +119,7 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
       isFullScreen ? "h-full flex flex-col" : "min-h-[50vh]"
     )}>
       <EditorToolbar editor={editor} />
+      <TableBubbleMenu editor={editor} />
       <EditorContent 
         editor={editor} 
         className={cn(
