@@ -10,29 +10,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Keyboard } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 export function KeyboardShortcutsDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <TooltipProvider>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DialogTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Keyboard className="h-5 w-5" />
-                <span className="sr-only">Keyboard Shortcuts</span>
-              </Button>
-            </DialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent>Keyboard Shortcuts</TooltipContent>
-        </Tooltip>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="text-muted-foreground hover:text-foreground"
+          title="Keyboard Shortcuts"
+        >
+          <Keyboard className="h-5 w-5" />
+          <span className="sr-only">Keyboard Shortcuts</span>
+        </Button>
+      </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
@@ -69,7 +63,6 @@ export function KeyboardShortcutsDialog() {
         </div>
       </DialogContent>
     </Dialog>
-    </TooltipProvider>
   );
 }
 
