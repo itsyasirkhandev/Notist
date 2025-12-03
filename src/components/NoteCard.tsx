@@ -34,12 +34,14 @@ import DOMPurify from "dompurify";
 
 interface NoteCardProps {
   note: Note;
+  searchQuery?: string;
   onDelete: (id: string) => void;
   onTogglePin: (id: string, currentPinStatus: boolean) => void;
 }
 
 const NoteCard: React.FC<NoteCardProps> = memo(({
   note,
+  searchQuery = "",
   onDelete,
   onTogglePin,
 }) => {
@@ -77,6 +79,22 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
       .replace(/\s+/g, ' ')
       .trim();
   }, [sanitizedContent]);
+
+  const highlightedContent = useMemo(() => {
+    const text = plainTextContent || "Start writing your thoughts...";
+    if (!searchQuery.trim()) return text;
+
+    const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, i) => 
+      regex.test(part) ? (
+        <span key={i} className="bg-yellow-200 dark:bg-yellow-900/50 text-foreground rounded-sm px-0.5 box-decoration-clone">
+          {part}
+        </span>
+      ) : part
+    );
+  }, [plainTextContent, searchQuery]);
 
   return (
     <li
@@ -214,7 +232,7 @@ const NoteCard: React.FC<NoteCardProps> = memo(({
           aria-label={`View ${note.title || 'Untitled Note'}`}
         >
           <p className="text-sm text-muted-foreground/80 line-clamp-5 leading-relaxed font-normal">
-            {plainTextContent || <span className="italic text-muted-foreground/50">No additional text</span>}
+            {plainTextContent ? highlightedContent : <span className="italic text-muted-foreground/50">No additional text</span>}
           </p>
           {/* Improved gradient fade */}
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-card via-card/90 to-transparent pointer-events-none" />

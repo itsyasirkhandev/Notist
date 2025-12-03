@@ -58,7 +58,7 @@ export function SignupForm({ setView }: SignupFormProps) {
         title: "Account created!",
         description: "A verification email has been sent. Please check your inbox.",
       });
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       console.error("Sign up error", error);
       let description = "Could not create account. Please try again.";
@@ -98,7 +98,7 @@ export function SignupForm({ setView }: SignupFormProps) {
             title: "Signed in with Google!",
             description: "Welcome to your dashboard.",
         });
-        router.push('/');
+        router.push('/dashboard');
     } catch (error: any) {
         console.error("Google sign in error", error);
         let description = "An unexpected error occurred during Google sign-in.";

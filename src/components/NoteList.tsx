@@ -5,14 +5,14 @@ import { Note } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Info, Search, MailWarning, Plus } from "lucide-react";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import NoteCard from "./NoteCard";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
 import { collection, doc, orderBy, query, serverTimestamp } from "firebase/firestore";
-import { sendEmailVerification } from "firebase/auth";
+import { sendEmailVerification, reload } from "firebase/auth";
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
 import { Loader } from "./Loader";
@@ -28,6 +28,31 @@ export function NoteList({ searchInputRef }: NoteListProps) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTag, setFilterTag] = useState<string>("all");
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  useEffect(() => {
+    if (user && !user.emailVerified) {
+      const intervalId = setInterval(async () => {
+        try {
+          await user.reload();
+          if (user.emailVerified) {
+            setIsVerifying(true);
+            clearInterval(intervalId);
+            // The component will naturally re-render with the new verified state
+            // But we can also force a toast or window reload if strictly needed
+            // React state update from user.reload() might not be instantaneous in the hook
+            // without a custom listener, but useUser/useFirebase typically listens to auth state changes.
+            // However, user.reload() updates the currentUser object in place.
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error("Error reloading user:", error);
+        }
+      }, 3000); // Check every 3 seconds
+
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
 
   const notesQuery = useMemoFirebase(() => {
     if (!user || !user.emailVerified) return null;
@@ -201,6 +226,7 @@ export function NoteList({ searchInputRef }: NoteListProps) {
               <NoteCard
                 key={note.id}
                 note={note}
+                searchQuery={searchTerm}
                 onDelete={handleDeleteNote}
                 onTogglePin={handleTogglePin}
               />

@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
 import { EditorToolbar } from './EditorToolbar';
 import { TableBubbleMenu } from './TableBubbleMenu';
+import { SlashCommand, suggestionOptions } from './SlashCommand';
 
 interface RichTextEditorProps {
   value: string;
@@ -35,6 +36,9 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
         heading: {
           levels: [1, 2, 3],
         },
+      }),
+      SlashCommand.configure({
+        suggestion: suggestionOptions,
       }),
       Underline,
       Link.configure({

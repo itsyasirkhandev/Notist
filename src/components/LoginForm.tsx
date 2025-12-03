@@ -58,7 +58,7 @@ export function LoginForm({ setView }: LoginFormProps) {
         title: "Signed in successfully!",
         description: "Welcome back.",
       });
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       console.error("Sign in error", error);
       let description = "Could not sign in. Please check your credentials.";
@@ -101,7 +101,7 @@ export function LoginForm({ setView }: LoginFormProps) {
             title: "Signed in with Google!",
             description: "Welcome to your dashboard.",
         });
-        router.push('/');
+        router.push('/dashboard');
     } catch (error: any) {
         console.error("Google sign in error", error);
         let description = "An unexpected error occurred during Google sign-in.";
