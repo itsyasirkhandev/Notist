@@ -1,8 +1,8 @@
 # AGENTS.md - Notist
 
 ## Project Snapshot
-- **Type:** Single Next.js 15 application (App Router)
-- **Stack:** TypeScript, React 18, TailwindCSS, shadcn/ui, Firebase, TipTap
+- **Type:** Single Next.js 16 application (App Router)
+- **Stack:** TypeScript, React 19, TailwindCSS v4, shadcn/ui, Firebase, TipTap
 - **Sub-guides:** See `src/components/AGENTS.md` and `src/firebase/AGENTS.md` for detailed patterns
 
 ## Root Setup Commands
@@ -52,7 +52,6 @@ npm run lint             # ESLint check
 | Hooks | `src/hooks/` | Custom React hooks |
 | Types | `src/lib/types.ts` | Shared TypeScript types |
 | Utilities | `src/lib/utils.ts` | `cn()` and helpers |
-| AI/Genkit | `src/ai/` | AI integration (Genkit) |
 | Styles | `src/app/globals.css` | Global CSS + Tailwind |
 
 ### Quick Find Commands (PowerShell/Windows)
@@ -74,13 +73,13 @@ Get-ChildItem -Path "src\app" -Recurse -Filter "page.tsx"
 | Purpose | File |
 |---------|------|
 | Main layout | `src/app/layout.tsx` |
-| Home page | `src/app/page.tsx` |
-| Global styles | `src/app/globals.css` |
-| Note type | `src/lib/types.ts` |
-| Firebase init | `src/firebase/index.ts` |
-| Auth provider | `src/firebase/provider.tsx` |
+| Landing page | `src/app/page.tsx` |
+| Dashboard | `src/app/dashboard/page.tsx` |
 | Rich text editor | `src/components/RichTextEditor.tsx` |
 | Note form | `src/components/NoteForm.tsx` |
+| Auth provider | `src/firebase/provider.tsx` |
+| Editor Toolbar | `src/components/EditorToolbar.tsx` |
+| Slash Commands | `src/components/SlashCommandList.tsx` |
 
 ## Tech-Specific Notes
 
@@ -93,7 +92,8 @@ Get-ChildItem -Path "src\app" -Recurse -Filter "page.tsx"
 ### TipTap Editor
 - Main component: `src/components/RichTextEditor.tsx`
 - Toolbar: `src/components/EditorToolbar.tsx`
-- Extensions: StarterKit, Underline, Link, TaskList, Table, Highlight, TextAlign
+- Menus: `TableBubbleMenu.tsx`, `SlashCommand.ts`
+- Extensions: StarterKit, Underline, Link, TaskList, Table, Highlight, TextAlign, BubbleMenu, Suggestion (Slash Commands)
 
 ### Firebase
 - Offline persistence enabled (Firestore local cache)
@@ -101,11 +101,7 @@ Get-ChildItem -Path "src\app" -Recurse -Filter "page.tsx"
 - See `src/firebase/AGENTS.md` for patterns
 
 ## Optimization Guidelines
-See [docs/OPTIMIZATION.md](docs/OPTIMIZATION.md) for the LEVER framework and code optimization principles:
-- Leverage existing patterns before creating new ones
-- Extend existing Firestore documents instead of new collections
-- Use computed properties instead of new queries
-- Target >50% code reduction vs naive implementation
+See [docs/OPTIMIZATION.md](docs/OPTIMIZATION.md) for the LEVER framework and code optimization principles.
 
 ## Definition of Done
 Before creating a PR, ensure:

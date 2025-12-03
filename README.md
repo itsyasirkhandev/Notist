@@ -1,11 +1,11 @@
-# Notist - Your Personal Note-Taking App
+# Notist - Modern Productivity & Note-Taking App
 
-**A modern, intuitive, and feature-rich note-taking application designed to help you stay organized and capture your thoughts.**
+**A beautiful, offline-first note-taking application built for the modern web. Capture ideas, organize thoughts, and get things done with a powerful rich-text editor and real-time sync.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge)](https://notesbyyasir.netlify.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-app.vercel.app/)
 
 <p align="center">
-  <img src="https://i.postimg.cc/W16R73gK/main-dashboard-page.png" alt="Notist Dashboard" width="100%">
+  <img src="public/hero-preview.png" alt="Notist Dashboard 3D Preview" width="100%">
 </p>
 
 ## Table of Contents
@@ -15,104 +15,130 @@
 - [Tech Stack](#tech-stack)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
 - [Connect with Me](#connect-with-me)
 
 ## About The Project
 
-Notist is a powerful and seamless note-taking app built with a modern tech stack. It provides a fluid user experience with real-time data synchronization, secure authentication, and a rich text editor. Whether you're managing daily thoughts or organizing complex projects, Notist is designed to help you capture your ideas and stay productive.
+Notist is a next-generation note-taking platform designed for speed, aesthetics, and functionality. It leverages the latest web technologies like **Next.js 16** and **Tailwind CSS v4** to deliver a fluid, app-like experience. 
+
+Whether you're drafting a blog post, managing tasks, or organizing research, Notist adapts to your workflow with features like **Slash Commands**, **Block-based Editing**, and **Offline Support**.
 
 ## Key Features
 
-- **Note Management**: Easily create, edit, and delete your notes.
-- **Rich Text Editing**: A full-featured WYSIWYG editor allows you to format your notes with headings, bold, italics, lists, and more.
-- **Tagging & Filtering**: Organize your notes with custom tags and quickly filter them by tag or search term.
-- **Drag and Drop**: Intuitively reorder your notes with a smooth drag-and-drop interface.
-- **Secure Authentication**: Sign in securely with your Google account or by Email/Password, powered by Firebase Authentication.
-- **Real-time Data Sync**: Your notes are saved and synced in real-time across all your devices using Firestore.
-- **Theming**: Switch between a light and dark mode to suit your preference.
-- **Responsive Design**: A mobile-first design ensures a great experience on any device, from desktops to smartphones.
+### 📝 Core Experience
+- **Rich Text Editor**: Powered by TipTap, featuring headings, lists, quotes, code blocks, and more.
+- **Slash Commands**: Type `/` to quickly insert elements like tables, task lists, and dividers.
+- **Markdown Support**: Intuitive formatting shortcuts (`#` for headings, `*` for lists).
+- **Table Management**: Advanced table controls with a floating bubble menu.
+
+### 🚀 Productivity
+- **Smart Search**: Instantly find notes with highlighted search terms in the preview.
+- **Keyboard Shortcuts**: Navigate and edit faster with a comprehensive shortcuts system (`Cmd+K`, `Cmd+J`).
+- **Quick Actions**: Pin, delete, or copy notes directly from the card view.
+- **Auto-Save**: Never lose work; changes are saved automatically and synced in real-time.
+
+### 🎨 Design & UX
+- **Modern Dashboard**: A beautiful, responsive grid layout with glassmorphism effects.
+- **Color-Coded Tags**: Organize notes with auto-colored tags for easy visual scanning.
+- **Dark Mode**: Fully optimized dark theme for comfortable night-time writing.
+- **Responsive**: Works perfectly on desktop, tablet, and mobile devices.
+
+### 🛡️ Tech & Security
+- **Offline-First**: Built with PWA capabilities; access and edit notes without internet.
+- **Real-Time Sync**: Data syncs instantly across all devices via Firebase Firestore.
+- **Secure Auth**: Enterprise-grade authentication with Google and Email/Password support.
 
 ## Tech Stack
 
 <p align="left">
-  <img src="https://img.shields.io/badge/Next.js_15-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next JS 15" />
-  <img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 18" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next JS 16" />
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS v4" />
-  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/TipTap-1a1a1a?style=for-the-badge&logo=tiptap&logoColor=white" alt="TipTap Editor" />
+  <img src="https://img.shields.io/badge/Firebase_11-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
+  <img src="https://img.shields.io/badge/TipTap-Editor-1a1a1a?style=for-the-badge&logo=tiptap&logoColor=white" alt="TipTap Editor" />
+  <img src="https://img.shields.io/badge/Shadcn_UI-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="Shadcn UI" />
 </p>
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
-- **Rich Text Editor**: [TipTap](https://tiptap.dev/)
-- **Backend & Database**: [Firebase](https://firebase.google.com/) (Firestore & Authentication)
-- **AI Integration**: [Genkit](https://firebase.google.com/docs/genkit) (Google AI)
+- **Editor**: [TipTap](https://tiptap.dev/) (Headless wrapper for ProseMirror)
+- **Database**: [Firebase Firestore](https://firebase.google.com/docs/firestore)
+- **Auth**: [Firebase Authentication](https://firebase.google.com/docs/auth)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Animation**: [Tailwind Animate](https://github.com/jamiebuilds/tailwindcss-animate)
 
 ## Screenshots
 
-| Main Dashboard Page | Notes Creation Page | Authentication Page |
+> *Note: Screenshots are placeholders. The live app features a 3D interactive preview.*
+
+| Dashboard | Editor with Slash Menu | Dark Mode |
 | :---: | :---: | :---: |
-| <img src="https://i.postimg.cc/W16R73gK/main-dashboard-page.png" alt="Main Dashboard" width="100%"> | <img src="https://i.postimg.cc/WpBbWdqV/notes-creation-interface.png" alt="Notes Creation" width="100%"> | <img src="https://i.postimg.cc/WzgjL7q1/auth-page.png" alt="Auth Page" width="100%"> |
+| ![Dashboard](https://placehold.co/600x400/e2e8f0/475569?text=Dashboard+View) | ![Editor](https://placehold.co/600x400/e2e8f0/475569?text=Slash+Commands) | ![Dark Mode](https://placehold.co/600x400/1e293b/cbd5e1?text=Dark+Mode) |
 
 ## Getting Started
 
-To get a local copy up and running, follow these simple steps.
-
 ### Prerequisites
-
-- Node.js (v18 or later)
+- Node.js 18+
 - npm
 
 ### Installation
 
 1.  **Clone the repository:**
-    ```sh
+    ```bash
     git clone https://github.com/itsyasirkhandev/notist.git
-    ```
-2.  **Navigate to the project directory:**
-    ```sh
     cd notist
     ```
-3.  **Install dependencies:**
-    ```sh
+
+2.  **Install dependencies:**
+    ```bash
     npm install
     ```
-4.  **Set up environment variables:**
-    Create a `.env` file in the root of your project and add your Firebase project credentials:
+
+3.  **Environment Setup:**
+    Create a `.env` file in the root directory with your Firebase credentials:
+    ```env
+    NEXT_PUBLIC_FIREBASE_API_KEY=...
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+    NEXT_PUBLIC_FIREBASE_APP_ID=...
     ```
-    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-    ```
-5.  **Run the development server:**
-    ```sh
+
+4.  **Run Development Server:**
+    ```bash
     npm run dev
     ```
-    Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
+    Visit `http://localhost:9002` to view the app.
 
-### Available Scripts
+## Project Structure
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server (port 9002) |
-| `npm run build` | Create production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-
+```
+src/
+├── app/                 # Next.js App Router pages
+│   ├── auth/            # Login/Signup pages
+│   ├── dashboard/       # Main dashboard
+│   ├── notes/           # Note editor routes
+│   └── page.tsx         # Landing page
+├── components/
+│   ├── landing/         # Landing page sections (Hero, Features, etc.)
+│   ├── ui/              # Reusable shadcn/ui primitives
+│   ├── NoteCard.tsx     # Dashboard note component
+│   ├── RichTextEditor.tsx # TipTap editor implementation
+│   └── ...
+├── firebase/            # Firebase config & hooks
+└── lib/                 # Utilities & types
+```
 
 ## Connect with Me
 
-- **Yasir Khan** 
+- **Yasir Khan**
 - **Portfolio**: [yasir.qzz.io](https://yasir.qzz.io)
 - **GitHub**: [@itsyasirkhandev](https://github.com/itsyasirkhandev)
-- **Facebook**: [Yasir Khan](https://web.facebook.com/profile.php?id=61580301107047)
+- **LinkedIn**: [Yasir Khan](https://linkedin.com/in/itsyasirkhandev)
 
 ---
 
-This project was bootstrapped with Firebase Studio.
+**Star the repo if you like it! ⭐**

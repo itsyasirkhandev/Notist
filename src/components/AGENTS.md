@@ -1,18 +1,21 @@
-# AGENTS.md - Components
-
 ## Package Identity
 - **Purpose:** React components for the Notist note-taking app
-- **Tech:** React 18, TypeScript, TailwindCSS, shadcn/ui, TipTap
+- **Tech:** React 19, TypeScript, TailwindCSS v4, shadcn/ui, TipTap
 
 ## Directory Structure
 ```
 components/
 ├── ui/                    # shadcn/ui primitives (DO NOT EDIT directly)
+├── landing/               # Landing page sections (Hero, Features, etc.)
 ├── NoteForm.tsx           # Note creation/editing form
 ├── NoteCard.tsx           # Note display card (list view)
 ├── NoteList.tsx           # Notes list with filtering
 ├── RichTextEditor.tsx     # TipTap editor wrapper
 ├── EditorToolbar.tsx      # TipTap formatting toolbar
+├── TableBubbleMenu.tsx    # Floating table controls
+├── SlashCommand.ts        # Slash command extension logic
+├── SlashCommandList.tsx   # Slash command UI menu
+├── KeyboardShortcutsDialog.tsx # Help dialog
 ├── Header.tsx             # App header
 ├── Auth.tsx               # Auth wrapper component
 ├── LoginForm.tsx          # Login form
@@ -85,6 +88,7 @@ src/components/NoteCard.tsx
 - Hover states
 - Action buttons
 - Tag display
+- Search highlighting
 
 #### List with Filtering (copy from)
 ```
@@ -94,6 +98,7 @@ src/components/NoteList.tsx
 - Loading skeletons
 - Empty states
 - Drag and drop
+- Auto-reload on verification
 
 #### Rich Text Editor (copy from)
 ```
@@ -103,6 +108,8 @@ src/components/EditorToolbar.tsx
 - TipTap integration
 - Toolbar with tooltips
 - Mobile-responsive toolbar
+- Floating bubble menus (Tables)
+- Slash commands
 
 ## UI Primitives (shadcn/ui)
 
@@ -171,6 +178,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 | App shell | `Header.tsx`, `ThemeToggle.tsx` |
 | Loading | `Loader.tsx`, `NoteItemSkeleton.tsx` |
 | Error handling | `ErrorBoundary.tsx` |
+| Landing Page | `landing/*.tsx` |
 
 ## JIT Index Hints
 ```powershell
