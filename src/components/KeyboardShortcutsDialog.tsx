@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Keyboard } from "lucide-react";
 
 export function KeyboardShortcutsDialog() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button 
           variant="ghost" 
