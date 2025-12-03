@@ -2,7 +2,7 @@
 
 **A beautiful, offline-first note-taking application built for the modern web. Capture ideas, organize thoughts, and get things done with a powerful rich-text editor and real-time sync.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-app.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-yk.vercel.app/)
 
 <p align="center">
   <img src="public/hero-preview.png" alt="Notist Dashboard 3D Preview" width="100%">
