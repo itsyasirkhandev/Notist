@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,22 +10,29 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Keyboard } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 export function KeyboardShortcutsDialog() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Dialog>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Keyboard className="h-5 w-5" />
-              <span className="sr-only">Keyboard Shortcuts</span>
-            </Button>
-          </DialogTrigger>
-        </TooltipTrigger>
-        <TooltipContent>Keyboard Shortcuts</TooltipContent>
-      </Tooltip>
+    <TooltipProvider>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Keyboard className="h-5 w-5" />
+                <span className="sr-only">Keyboard Shortcuts</span>
+              </Button>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>Keyboard Shortcuts</TooltipContent>
+        </Tooltip>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
@@ -34,7 +42,7 @@ export function KeyboardShortcutsDialog() {
             <h3 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wider">General</h3>
             <div className="space-y-3">
               <ShortcutItem label="Search Notes" keys={["⌘", "K"]} />
-              <ShortcutItem label="New Note" keys={["⌘", "J"]} />
+              <ShortcutItem label="New Note" keys={["⌘", "N"]} />
               <ShortcutItem label="Save Note" keys={["⌘", "S"]} />
               <ShortcutItem label="Toggle Fullscreen" keys={["F"]} />
               <ShortcutItem label="Exit Fullscreen" keys={["Esc"]} />
@@ -61,6 +69,7 @@ export function KeyboardShortcutsDialog() {
         </div>
       </DialogContent>
     </Dialog>
+    </TooltipProvider>
   );
 }
 
