@@ -88,13 +88,20 @@ Whether you're drafting a blog post, managing tasks, or organizing research, Not
 
 ## Screenshots
 
-### Dashboard Views
-| Light Mode Dashboard | Dark Mode Dashboard |
-| :---: | :---: |
-| ![Light Dashboard](https://i.postimg.cc/KY2jFzrn/Notist-light-dashboard.png) | ![Dark Dashboard](https://i.postimg.cc/W4vzj368/notist-dark-dashboard.png) |
+<p align="center">
+  <img src="https://i.postimg.cc/KY2jFzrn/Notist-light-dashboard.png" alt="Notist Light Dashboard" width="80%">
+  <br><em>Light Mode Dashboard</em>
+</p>
 
-### Note Editor
-![Note Editor - Rich Text Editing](https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png)
+<p align="center">
+  <img src="https://i.postimg.cc/W4vzj368/notist-dark-dashboard.png" alt="Notist Dark Dashboard" width="80%">
+  <br><em>Dark Mode Dashboard</em>
+</p>
+
+<p align="center">
+  <img src="https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png" alt="Rich Text Editor" width="80%">
+  <br><em>Rich Text Note Editor</em>
+</p>
 
 ## Getting Started
 

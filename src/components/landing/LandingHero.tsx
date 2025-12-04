@@ -83,50 +83,76 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Real App Preview */}
-        <div className="mt-24 relative perspective-1000 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-          {/* Glow effect behind preview */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary/20 rounded-full blur-[120px] -z-10 opacity-50" />
+        {/* Unique Floating Cards Preview */}
+        <div className="mt-24 relative animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
+          {/* Glow effects */}
+          <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/30 rounded-full blur-[120px] -z-10 opacity-40" />
+          <div className="absolute top-1/2 right-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] -z-10 opacity-40" />
           
-          <div className="relative mx-auto max-w-6xl transform-gpu hover:scale-105 transition-transform duration-1000 ease-out">
-            <div className="rounded-xl border border-white/10 bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden ring-1 ring-white/10 dark:ring-white/5">
-              {/* Browser Header */}
-              <div className="bg-muted/80 px-4 py-3 border-b flex items-center justify-between backdrop-blur-md">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
+          <div className="relative mx-auto max-w-6xl h-[500px] md:h-[600px]">
+            {/* Dark Mode Dashboard - Back Left */}
+            <div className="absolute left-0 top-8 w-[70%] md:w-[55%] transform -rotate-3 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 ease-out group cursor-pointer">
+              <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-background/50 backdrop-blur-sm">
+                <div className="bg-zinc-900 px-3 py-2 border-b border-white/5 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                  </div>
+                  <span className="text-[10px] text-zinc-500 ml-2">Dark Mode</span>
                 </div>
-                <div className="flex items-center gap-2 bg-background/50 px-3 py-1 rounded-md text-xs text-muted-foreground border border-white/5 min-w-[200px] justify-center">
-                  <span className="opacity-50">notist.app/dashboard</span>
-                </div>
-                <div className="w-12" /> {/* Spacer */}
+                <img 
+                  src="https://i.postimg.cc/W4vzj368/notist-dark-dashboard.png" 
+                  alt="Notist Dashboard - Dark Mode"
+                  className="w-full h-auto"
+                />
               </div>
+              <div className="absolute -bottom-3 left-4 bg-zinc-800 text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                Dark Mode
+              </div>
+            </div>
 
-              {/* Dashboard Screenshots */}
-              <div className="relative">
-                {/* Main Dashboard Image */}
+            {/* Light Mode Dashboard - Front Right */}
+            <div className="absolute right-0 top-0 w-[75%] md:w-[60%] transform rotate-2 hover:rotate-0 hover:scale-105 hover:z-30 transition-all duration-500 ease-out z-10 group cursor-pointer">
+              <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-background/50 backdrop-blur-sm ring-1 ring-black/5">
+                <div className="bg-muted/90 px-3 py-2 border-b flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                  </div>
+                  <span className="text-[10px] text-muted-foreground ml-2">Light Mode</span>
+                </div>
                 <img 
                   src="https://i.postimg.cc/KY2jFzrn/Notist-light-dashboard.png" 
                   alt="Notist Dashboard - Light Mode"
                   className="w-full h-auto"
                 />
-                
-                {/* Note Editor Overlay */}
-                <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 w-1/3 min-w-[200px] hidden md:block">
-                  <div className="relative group">
-                    <img 
-                      src="https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png" 
-                      alt="Rich Text Editor"
-                      className="w-full h-auto rounded-lg shadow-2xl border border-white/10"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute bottom-2 left-2 text-white text-xs font-medium">
-                        Rich Text Editor
-                      </div>
-                    </div>
+              </div>
+              <div className="absolute -bottom-3 right-4 bg-primary text-primary-foreground text-xs px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                Light Mode
+              </div>
+            </div>
+
+            {/* Note Editor - Floating Center */}
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[50%] md:w-[40%] transform hover:scale-110 hover:z-40 transition-all duration-500 ease-out z-20 group cursor-pointer">
+              <div className="rounded-xl overflow-hidden shadow-2xl border-2 border-primary/20 bg-background ring-2 ring-primary/10">
+                <div className="bg-muted/90 px-3 py-2 border-b flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
                   </div>
+                  <span className="text-[10px] text-muted-foreground ml-2">Rich Text Editor</span>
                 </div>
+                <img 
+                  src="https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png" 
+                  alt="Rich Text Editor"
+                  className="w-full h-auto"
+                />
+              </div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-purple-500 text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg whitespace-nowrap">
+                Powerful Editor
               </div>
             </div>
           </div>
