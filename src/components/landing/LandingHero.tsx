@@ -52,8 +52,8 @@ export function LandingHero() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="text-base px-8 h-12 rounded-full border-primary/20 hover:bg-primary/5 hover:-translate-y-0.5 transition-all duration-300">
-              <Link href="#how-it-works">
-                See how it helps you
+              <Link href="#demo">
+                Watch the 2-min demo
               </Link>
             </Button>
           </div>

@@ -69,7 +69,7 @@ export function PricingSection() {
                 ))}
               </ul>
 
-              {/* CTA Button */
+              {/* CTA Button */}
               <Button size="lg" className="w-full text-base h-14 rounded-full shadow-lg hover:shadow-primary/25 font-semibold" asChild>
                 <Link href="/auth">
                   Start Taking Notes — It's Always Free

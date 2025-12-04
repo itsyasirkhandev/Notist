@@ -4,6 +4,7 @@ import {
   LandingNav,
   LandingHero,
   FeatureSection,
+  VideoDemo,
   HowItWorks,
   PricingSection,
   LandingCTA,
@@ -17,6 +18,7 @@ export default function Home() {
       <main>
         <LandingHero />
         <FeatureSection />
+        <VideoDemo />
         <HowItWorks />
         <PricingSection />
         <LandingCTA />
