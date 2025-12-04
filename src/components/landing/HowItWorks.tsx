@@ -6,20 +6,20 @@ const steps = [
   {
     number: '01',
     icon: UserPlus,
-    title: 'Sign up in seconds',
-    description: 'Create your free account with Google or email. No credit card required.',
+    title: 'You start in 30 seconds',
+    description: 'Create your free account with Google or email. We won\'t ask for your credit card.',
   },
   {
     number: '02',
     icon: PenTool,
-    title: 'Start writing',
-    description: 'Use our rich text editor with formatting, tags, and task lists.',
+    title: 'You write like a pro',
+    description: 'Use our rich text editor to format, add tags, and create task lists. Your ideas deserve to look good.',
   },
   {
     number: '03',
     icon: Globe,
-    title: 'Access anywhere',
-    description: 'Your notes sync automatically across all your devices in real-time.',
+    title: 'Your notes travel with you',
+    description: 'Your notes sync instantly across all your devices. You can access them anywhere, anytime.',
   },
 ];
 
@@ -30,13 +30,13 @@ export function HowItWorks() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight">
-            Get started in{' '}
+            You'll be set up in{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
               3 simple steps
             </span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            From zero to organized in under a minute. No complicated setup required.
+            You'll go from scattered to organized in under 60 seconds. We never make you jump through hoops.
           </p>
         </div>
 

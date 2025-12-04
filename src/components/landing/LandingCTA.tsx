@@ -31,12 +31,12 @@ export function LandingCTA() {
           <div className="relative text-center max-w-3xl mx-auto">
             {/* Ask */}
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 tracking-tight">
-              Ready to finally organize your thoughts?
+              Ready to finally organize YOUR thoughts?
             </h2>
             
             {/* Call */}
             <p className="text-xl text-primary-foreground/90 mb-10 font-medium max-w-2xl mx-auto">
-              Join thousands of thinkers who use Notist to capture ideas and get things done.
+              You'll join thousands of thinkers who use Notist to capture ideas and get things done. Your brain will thank you.
             </p>
 
             {/* Send (CTA) */}
@@ -48,14 +48,14 @@ export function LandingCTA() {
                 className="text-base px-8 h-14 font-bold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 bg-background text-foreground hover:bg-background/90"
               >
                 <Link href="/auth">
-                  Get Started Free
+                  Organize YOUR thoughts now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
 
             <p className="text-sm text-primary-foreground/70 mt-8 font-medium tracking-wide uppercase">
-              Free forever • No credit card required • Set up in 30s
+              You can start in 30 seconds • We'll never ask for your card • Your ideas are waiting
             </p>
           </div>
         </div>

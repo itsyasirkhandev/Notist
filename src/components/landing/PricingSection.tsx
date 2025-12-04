@@ -26,11 +26,11 @@ export function PricingSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight">
-            Simple pricing.{' '}
-            <span className="text-primary">Free forever.</span>
+            Everything you need,{' '}
+            <span className="text-primary">forever free</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            No hidden fees. No premium tiers. Just a great note-taking experience.
+            You get all the features without paying a dime. No catches, no upgrades, no limits.
           </p>
         </div>
 
@@ -69,10 +69,10 @@ export function PricingSection() {
                 ))}
               </ul>
 
-              {/* CTA Button */}
+              {/* CTA Button */
               <Button size="lg" className="w-full text-base h-14 rounded-full shadow-lg hover:shadow-primary/25 font-semibold" asChild>
                 <Link href="/auth">
-                  Start Taking Notes — It's Free
+                  Start Taking Notes — It's Always Free
                 </Link>
               </Button>
             </CardContent>

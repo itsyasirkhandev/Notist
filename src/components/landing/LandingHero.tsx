@@ -32,29 +32,28 @@ export function LandingHero() {
 
           {/* Hero Headline */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 leading-[1.1]">
-            Capture Ideas. <br className="hidden sm:block" />
+            Your brain has <br className="hidden sm:block" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-blue-600 animate-gradient-x">
-              Organize Thoughts.
+              too many tabs open
             </span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200 leading-relaxed">
-            The note-taking app that works the way your mind does. 
-            Rich text editing, real-time sync, and offline support — all in one beautiful interface.
+            Finally, a place for YOUR ideas. We help you turn scattered thoughts into organized notes you can actually find when you need them.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto mb-16 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
             <Button size="lg" asChild className="text-base px-8 h-12 rounded-full shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5 transition-all duration-300">
               <Link href="/auth">
-                Get Started Free
+                Start organizing your thoughts
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="text-base px-8 h-12 rounded-full border-primary/20 hover:bg-primary/5 hover:-translate-y-0.5 transition-all duration-300">
               <Link href="#how-it-works">
-                See How It Works
+                See how it helps you
               </Link>
             </Button>
           </div>
@@ -69,17 +68,17 @@ export function LandingHero() {
                   </div>
                 ))}
               </div>
-              <span className="font-medium text-foreground">Trusted by 1000+ thinkers</span>
+              <span className="font-medium text-foreground">You'll join 1000+ organized thinkers</span>
             </div>
             <div className="hidden sm:block w-px h-4 bg-border/60 self-center" />
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-              <span>4.9/5 average rating</span>
+              <span>You'll love the 4.9/5 rating</span>
             </div>
             <div className="hidden sm:block w-px h-4 bg-border/60 self-center" />
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span>Free forever plan available</span>
+              <span>You can start free, forever</span>
             </div>
           </div>
         </div>

@@ -18,33 +18,33 @@ import {
 
 const features = [
   {
-    title: 'Chaos → Clarity',
-    description: 'Transform scattered thoughts into organized, beautiful notes.',
+    title: 'You\'ll think clearly again',
+    description: 'Turn your chaotic thoughts into organized notes you can actually use.',
     icon: Sparkles,
     items: [
-      { icon: Type, text: 'Rich text editing with formatting' },
-      { icon: Tags, text: 'Tags & instant filtering' },
-      { icon: RefreshCw, text: 'Real-time sync across devices' },
+      { icon: Type, text: 'You\'ll write beautifully formatted notes' },
+      { icon: Tags, text: 'You\'ll find everything with smart tags' },
+      { icon: RefreshCw, text: 'Your notes follow you everywhere' },
     ],
   },
   {
-    title: 'Scattered → Organized',
-    description: 'Find what you need, when you need it.',
+    title: 'You\'ll find anything in seconds',
+    description: 'Never waste time searching for that important idea again.',
     icon: FolderSearch,
     items: [
-      { icon: GripVertical, text: 'Drag-and-drop reordering' },
-      { icon: Pin, text: 'Pin important notes to top' },
-      { icon: Search, text: 'Search everything instantly' },
+      { icon: GripVertical, text: 'You\'ll organize notes your way' },
+      { icon: Pin, text: 'You\'ll keep important ideas on top' },
+      { icon: Search, text: 'You\'ll search everything instantly' },
     ],
   },
   {
-    title: 'Offline → Always Available',
-    description: 'Never lose a thought, even without internet.',
+    title: 'You\'ll never lose a thought',
+    description: 'Your ideas are safe with you, even when you\'re offline.',
     icon: WifiOff,
     items: [
-      { icon: Zap, text: 'Works without internet' },
-      { icon: Cloud, text: 'Auto-sync when connected' },
-      { icon: Shield, text: 'Your data, always safe' },
+      { icon: Zap, text: 'You\'ll keep working without internet' },
+      { icon: Cloud, text: 'Your notes sync automatically' },
+      { icon: Shield, text: 'Your thoughts stay private and safe' },
     ],
   },
 ];
@@ -60,14 +60,14 @@ export function FeatureSection() {
             <span>Features</span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight">
-            Everything you need to{' '}
+            You'll get everything you need to{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
               think clearly
             </span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Powerful features that help you capture, organize, and find your ideas — 
-            without getting in the way.
+            We built the tools you need to capture, organize, and find your ideas — 
+            so you can focus on what matters most to you.
           </p>
         </div>
 
