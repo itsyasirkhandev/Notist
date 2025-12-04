@@ -88,11 +88,13 @@ Whether you're drafting a blog post, managing tasks, or organizing research, Not
 
 ## Screenshots
 
-> *Note: Screenshots are placeholders. The live app features a 3D interactive preview.*
+### Dashboard Views
+| Light Mode Dashboard | Dark Mode Dashboard |
+| :---: | :---: |
+| ![Light Dashboard](https://i.postimg.cc/KY2jFzrn/Notist-light-dashboard.png) | ![Dark Dashboard](https://i.postimg.cc/W4vzj368/notist-dark-dashboard.png) |
 
-| Dashboard | Editor with Slash Menu | Dark Mode |
-| :---: | :---: | :---: |
-| ![Dashboard](https://placehold.co/600x400/e2e8f0/475569?text=Dashboard+View) | ![Editor](https://placehold.co/600x400/e2e8f0/475569?text=Slash+Commands) | ![Dark Mode](https://placehold.co/600x400/1e293b/cbd5e1?text=Dark+Mode) |
+### Note Editor
+![Note Editor - Rich Text Editing](https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png)
 
 ## Getting Started
 

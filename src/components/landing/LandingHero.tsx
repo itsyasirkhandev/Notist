@@ -83,14 +83,14 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* 3D App Preview */}
+        {/* Real App Preview */}
         <div className="mt-24 relative perspective-1000 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
           {/* Glow effect behind preview */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary/20 rounded-full blur-[120px] -z-10 opacity-50" />
           
-          <div className="relative mx-auto max-w-6xl transform-gpu rotate-x-12 hover:rotate-x-0 transition-transform duration-1000 ease-out">
+          <div className="relative mx-auto max-w-6xl transform-gpu hover:scale-105 transition-transform duration-1000 ease-out">
             <div className="rounded-xl border border-white/10 bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden ring-1 ring-white/10 dark:ring-white/5">
-              {/* Fake Browser Header */}
+              {/* Browser Header */}
               <div className="bg-muted/80 px-4 py-3 border-b flex items-center justify-between backdrop-blur-md">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -103,45 +103,28 @@ export function LandingHero() {
                 <div className="w-12" /> {/* Spacer */}
               </div>
 
-              {/* Dashboard Preview Content */}
-              <div className="p-6 md:p-8 min-h-[400px] md:min-h-[500px] bg-gradient-to-br from-background via-muted/10 to-background relative">
-                {/* Sidebar Mock */}
-                <div className="absolute left-0 top-0 bottom-0 w-64 border-r bg-background/30 hidden md:block p-4 space-y-4">
-                  <div className="h-8 w-32 bg-primary/10 rounded-md mb-6 animate-pulse" />
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="h-8 w-full bg-muted/50 rounded-md" />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Main Content Mock */}
-                <div className="md:ml-64 space-y-6">
-                  {/* Header */}
-                  <div className="flex justify-between items-center mb-8">
-                    <div className="h-8 w-48 bg-muted/50 rounded-md" />
-                    <div className="flex gap-2">
-                      <div className="h-8 w-8 rounded-full bg-muted/50" />
-                      <div className="h-8 w-8 rounded-full bg-primary/20" />
-                    </div>
-                  </div>
-
-                  {/* Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="p-5 rounded-xl bg-card border shadow-sm hover:shadow-md transition-all group">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="h-2 w-16 bg-primary/20 rounded-full" />
-                          <div className="h-4 w-4 bg-muted rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        <div className="h-5 w-3/4 bg-foreground/10 rounded-md mb-3" />
-                        <div className="space-y-2">
-                          <div className="h-3 w-full bg-muted/40 rounded-md" />
-                          <div className="h-3 w-5/6 bg-muted/40 rounded-md" />
-                          <div className="h-3 w-4/6 bg-muted/40 rounded-md" />
-                        </div>
+              {/* Dashboard Screenshots */}
+              <div className="relative">
+                {/* Main Dashboard Image */}
+                <img 
+                  src="https://i.postimg.cc/KY2jFzrn/Notist-light-dashboard.png" 
+                  alt="Notist Dashboard - Light Mode"
+                  className="w-full h-auto"
+                />
+                
+                {/* Note Editor Overlay */}
+                <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 w-1/3 min-w-[200px] hidden md:block">
+                  <div className="relative group">
+                    <img 
+                      src="https://i.postimg.cc/6QXqw3LC/note-creation-editing-light.png" 
+                      alt="Rich Text Editor"
+                      className="w-full h-auto rounded-lg shadow-2xl border border-white/10"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute bottom-2 left-2 text-white text-xs font-medium">
+                        Rich Text Editor
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
               </div>
