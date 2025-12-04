@@ -293,6 +293,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
               isFullScreen && "flex-grow min-h-0 overflow-y-auto"
             )}>
               <RichTextEditor 
+                key={`editor-${noteId || 'new'}`}
                 value={content} 
                 onChange={setContent} 
                 isFullScreen={isFullScreen}

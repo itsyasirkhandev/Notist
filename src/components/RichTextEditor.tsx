@@ -15,7 +15,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
 import { cn } from '@/lib/utils';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { EditorToolbar } from './EditorToolbar';
 import { TableBubbleMenu } from './TableBubbleMenu';
 import { SlashCommand, suggestionOptions } from './SlashCommand';
@@ -29,53 +29,61 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Rich text editor" }: RichTextEditorProps) {
   const hasInitialized = useRef(false);
+  const isUpdating = useRef(false);
+
+  // Memoize extensions to prevent recreation
+  const extensions = useCallback(() => [
+    StarterKit.configure({
+      heading: {
+        levels: [1, 2, 3],
+      },
+    }),
+    SlashCommand.configure({
+      suggestion: suggestionOptions,
+    }),
+    Underline,
+    Link.configure({
+      openOnClick: true,
+      autolink: true,
+      linkOnPaste: true,
+      HTMLAttributes: {
+        class: 'text-primary underline cursor-pointer',
+        rel: 'noopener noreferrer nofollow',
+        target: '_blank',
+      },
+    }),
+    TaskList,
+    TaskItem.configure({
+      nested: true,
+    }),
+    Placeholder.configure({
+      placeholder: 'Start writing your note...',
+    }),
+    Table.configure({
+      resizable: true,
+    }),
+    TableRow,
+    TableCell,
+    TableHeader,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
+    Highlight.configure({
+      multicolor: true,
+    }),
+    BubbleMenuExtension,
+  ], []);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
-      SlashCommand.configure({
-        suggestion: suggestionOptions,
-      }),
-      Underline,
-      Link.configure({
-        openOnClick: true,
-        autolink: true,
-        linkOnPaste: true,
-        HTMLAttributes: {
-          class: 'text-primary underline cursor-pointer',
-          rel: 'noopener noreferrer nofollow',
-          target: '_blank',
-        },
-      }),
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }),
-      Placeholder.configure({
-        placeholder: 'Start writing your note...',
-      }),
-      Table.configure({
-        resizable: true,
-      }),
-      TableRow,
-      TableCell,
-      TableHeader,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      Highlight.configure({
-        multicolor: true,
-      }),
-      BubbleMenuExtension,
-    ],
+    extensions: extensions(),
     content: value,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
+      isUpdating.current = true;
       onChange(editor.getHTML());
+      setTimeout(() => {
+        isUpdating.current = false;
+      }, 0);
     },
     editorProps: {
       attributes: {
@@ -85,11 +93,13 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
     },
   });
 
-  // Only set content on initial mount, not on every value change
+  // Only set content when external value changes and we're not in the middle of an update
   useEffect(() => {
     if (editor && !hasInitialized.current && value) {
       editor.commands.setContent(value, { emitUpdate: false });
       hasInitialized.current = true;
+    } else if (editor && hasInitialized.current && !isUpdating.current && editor.getHTML() !== value) {
+      editor.commands.setContent(value, { emitUpdate: false });
     }
   }, [editor, value]);
 
@@ -97,6 +107,7 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
   useEffect(() => {
     return () => {
       hasInitialized.current = false;
+      isUpdating.current = false;
     };
   }, []);
 

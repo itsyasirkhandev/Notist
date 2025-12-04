@@ -1,12 +1,12 @@
 "use client";
 
-import { Note } from "@/lib/types";
+import { Note, Timestamp } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Plus, Info, NotebookPen } from "lucide-react";
 import React, { useState, useEffect, FormEvent, DragEvent } from "react";
-import NoteItem from "./NoteItem";
+import NoteItem from "./TaskItem";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,10 +21,10 @@ import {
 import Link from "next/link";
 
 const initialNotes: Note[] = [
-  { id: "1", title: "Welcome to Notes!", content: "Get started by adding a note.", tags: ["getting-started"], completed: false, createdAt: new Date().toISOString() },
-  { id: "2", title: "Mark as complete", content: "Use the checkbox to mark notes as complete.", tags: [], completed: true, createdAt: new Date().toISOString() },
-  { id: "3", title: "Drag and drop", content: "Drag and drop to reorder your notes.", tags: [], completed: false, createdAt: new Date().toISOString() },
-  { id: "4", title: "Edit or delete", content: "Use the buttons on the right to edit or delete.", tags: [], completed: false, createdAt: new Date().toISOString() },
+  { id: "1", title: "Welcome to Notes!", content: "Get started by adding a note.", tags: ["getting-started"], completed: false, createdAt: Timestamp.now(), updatedAt: Timestamp.now() },
+  { id: "2", title: "Mark as complete", content: "Use the checkbox to mark notes as complete.", tags: [], completed: true, createdAt: Timestamp.now(), updatedAt: Timestamp.now() },
+  { id: "3", title: "Drag and drop", content: "Drag and drop to reorder your notes.", tags: [], completed: false, createdAt: Timestamp.now(), updatedAt: Timestamp.now() },
+  { id: "4", title: "Edit or delete", content: "Use the buttons on the right to edit or delete.", tags: [], completed: false, createdAt: Timestamp.now(), updatedAt: Timestamp.now() },
 ];
 
 export function NoteList() {
