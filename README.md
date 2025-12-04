@@ -2,14 +2,31 @@
 
 **A beautiful, offline-first note-taking application built for the modern web. Capture ideas, organize thoughts, and get things done with a powerful rich-text editor and real-time sync.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-yk.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-yk.vercel.app/) [![Demo Video](https://img.shields.io/badge/Demo%20Video-Watch%20Now-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/6JB2v4oabrk)
 
 <p align="center">
   <img src="public/hero-preview.png" alt="Notist Dashboard 3D Preview" width="100%">
 </p>
 
+## 🎥 Demo Video
+
+Watch how you can transform scattered thoughts into organized notes in just 2 minutes:
+
+<p align="center">
+  <a href="https://youtu.be/6JB2v4oabrk" target="_blank">
+    <img src="https://img.youtube.com/vi/6JB2v4oabrk/maxresdefault.jpg" alt="Notist Demo Video Thumbnail" style="width: 100%; max-width: 800px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://youtu.be/6JB2v4oabrk" target="_blank">
+    <img src="https://img.shields.io/badge/Watch%20Demo-YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo">
+  </a>
+</p>
+
 ## Table of Contents
 
+- [🎥 Demo Video](#-demo-video)
 - [About The Project](#about-the-project)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
