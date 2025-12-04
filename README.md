@@ -10,6 +10,10 @@
 
 ## 🎥 Demo Video
 
+
+https://github.com/user-attachments/assets/406a8056-ab8a-4eea-9a5f-a7c3c34fe988
+
+
 Watch how you can transform scattered thoughts into organized notes in just 2 minutes:
 
 <p align="center">
