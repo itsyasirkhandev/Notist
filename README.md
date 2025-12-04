@@ -4,9 +4,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge&logo=vercel)](https://notist-yk.vercel.app/) [![Demo Video](https://img.shields.io/badge/Demo%20Video-Watch%20Now-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/6JB2v4oabrk)
 
-<p align="center">
-  <img src="public/hero-preview.png" alt="Notist Dashboard 3D Preview" width="100%">
-</p>
 
 ## 🎥 Demo Video
 
