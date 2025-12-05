@@ -27,7 +27,6 @@ import {
   Table,
   Highlighter,
   MoreHorizontal,
-  FileText,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -138,11 +137,6 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
 
   const addTable = () => {
     editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-  };
-
-  const convertMarkdown = () => {
-    const text = editor.getText();
-    editor.commands.setContent(text);
   };
 
   return (
@@ -372,14 +366,6 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
           >
             <Table className="h-4 w-4" />
           </ToolbarButton>
-          
-          <ToolbarButton
-            onClick={convertMarkdown}
-            tooltip="Render Markdown"
-            isToggle={false}
-          >
-            <FileText className="h-4 w-4" />
-          </ToolbarButton>
         </div>
 
         {/* Mobile overflow menu */}
@@ -433,9 +419,6 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={addTable}>
                 <Table className="h-4 w-4 mr-2" /> Insert Table
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={convertMarkdown}>
-                <FileText className="h-4 w-4 mr-2" /> Render Markdown
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
