@@ -85,6 +85,8 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
     }),
   ], []);
 
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
+
   const editor = useEditor({
     extensions: extensions(),
     content: value,
@@ -103,6 +105,68 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
       },
     },
   });
+
+  // Store editor reference for paste handler
+  useEffect(() => {
+    if (editor) {
+      (editorRef as any).current = editor;
+    }
+  }, [editor]);
+
+  // Handle markdown paste
+  useEffect(() => {
+    if (!editor) return;
+
+    const handlePaste = (event: ClipboardEvent) => {
+      const text = event.clipboardData?.getData('text/plain');
+      if (!text) return;
+
+      const markdownPatterns = [
+        /^#{1,6}\s/m,           // Headings
+        /\*\*[^*]+\*\*/,        // Bold
+        /\*[^*]+\*/,            // Italic
+        /~~[^~]+~~/,            // Strikethrough
+        /`[^`]+`/,              // Inline code
+        /```[\s\S]*```/,        // Code blocks
+        /^\s*[-*+]\s/m,         // Unordered lists
+        /^\s*\d+\.\s/m,         // Ordered lists
+        /^\s*>\s/m,             // Blockquotes
+        /\[.+\]\(.+\)/,         // Links
+        /^---$/m,               // Horizontal rule
+        /^\s*\[[ x]\]\s/m,      // Task lists
+      ];
+
+      const isMarkdown = markdownPatterns.some(pattern => pattern.test(text));
+
+      if (isMarkdown) {
+        const markdownStorage = (editor.storage as any).markdown;
+        if (markdownStorage?.parser) {
+          event.preventDefault();
+          event.stopPropagation();
+          
+          try {
+            const parsed = markdownStorage.parser.parse(text);
+            if (parsed && parsed.content) {
+              const { from, to } = editor.state.selection;
+              editor.view.dispatch(
+                editor.state.tr.replaceWith(from, to, parsed.content)
+              );
+            }
+          } catch (e) {
+            // Fallback: insert as plain text if parsing fails
+            editor.commands.insertContent(text);
+          }
+        }
+      }
+    };
+
+    const editorElement = editor.view.dom;
+    editorElement.addEventListener('paste', handlePaste, true);
+
+    return () => {
+      editorElement.removeEventListener('paste', handlePaste, true);
+    };
+  }, [editor]);
 
   // Only set content when external value changes and we're not in the middle of an update
   useEffect(() => {
