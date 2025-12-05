@@ -101,6 +101,43 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
         class: 'outline-none min-h-[200px] px-4 py-3',
         'aria-label': ariaLabel,
       },
+      handlePaste: (view, event) => {
+        const text = event.clipboardData?.getData('text/plain');
+        
+        if (!text) return false;
+        
+        // Check if text looks like markdown
+        const markdownPatterns = [
+          /^#{1,6}\s/m,           // Headings
+          /\*\*[^*]+\*\*/,        // Bold
+          /\*[^*]+\*/,            // Italic  
+          /~~[^~]+~~/,            // Strikethrough
+          /`[^`]+`/,              // Inline code
+          /```[\s\S]*```/,        // Code blocks
+          /^\s*[-*+]\s/m,         // Unordered lists
+          /^\s*\d+\.\s/m,         // Ordered lists
+          /^\s*>\s/m,             // Blockquotes
+          /\[.+\]\(.+\)/,         // Links
+          /^---$/m,               // Horizontal rule
+          /^\s*-\s*\[[ x]\]/m,    // Task lists
+        ];
+        
+        const isMarkdown = markdownPatterns.some(p => p.test(text));
+        
+        if (isMarkdown) {
+          event.preventDefault();
+          
+          // Get the editor instance from the view
+          const editorInstance = (view as any).editor;
+          if (editorInstance) {
+            // Insert markdown at current cursor position
+            editorInstance.commands.insertContent(text);
+            return true;
+          }
+        }
+        
+        return false; // Let default behavior handle non-markdown
+      },
     },
   });
 
