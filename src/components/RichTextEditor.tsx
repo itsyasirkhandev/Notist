@@ -14,6 +14,7 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
+import { Markdown } from 'tiptap-markdown';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useCallback } from 'react';
 import { EditorToolbar } from './EditorToolbar';
@@ -72,6 +73,16 @@ export function RichTextEditor({ value, onChange, isFullScreen, ariaLabel = "Ric
       multicolor: true,
     }),
     BubbleMenuExtension,
+    Markdown.configure({
+      html: true,
+      tightLists: true,
+      tightListClass: 'tight',
+      bulletListMarker: '-',
+      linkify: true,
+      breaks: false,
+      transformPastedText: true,
+      transformCopiedText: true,
+    }),
   ], []);
 
   const editor = useEditor({
