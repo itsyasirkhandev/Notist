@@ -56,7 +56,7 @@ export function NoteList({ searchInputRef }: NoteListProps) {
 
   const notesQuery = useMemoFirebase(() => {
     if (!user || !user.emailVerified) return null;
-    return query(collection(firestore, `users/${user.uid}/notes`), orderBy('updatedAt', 'desc'));
+    return query(collection(firestore, `users/${user.uid}/notes`), orderBy('createdAt', 'desc'));
   }, [user, firestore]);
 
   const { data: notes, isLoading } = useCollection<Note>(notesQuery);
@@ -81,9 +81,9 @@ export function NoteList({ searchInputRef }: NoteListProps) {
           // Pinned notes first
           if (a.pinned && !b.pinned) return -1;
           if (!a.pinned && b.pinned) return 1;
-          // Then sort by updatedAt
-          if (a.updatedAt && b.updatedAt) {
-              return b.updatedAt.toMillis() - a.updatedAt.toMillis();
+          // Then sort by createdAt (date created)
+          if (a.createdAt && b.createdAt) {
+              return b.createdAt.toMillis() - a.createdAt.toMillis();
           }
           return 0;
       });
