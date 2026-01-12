@@ -10,7 +10,7 @@ import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent, useCal
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui/badge";
 import { useDoc, useFirebase, useMemoFirebase } from "@/firebase";
-import { doc, serverTimestamp, collection, addDoc } from "firebase/firestore";
+import { doc, serverTimestamp, collection, addDoc, deleteDoc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Loader } from "./Loader";
 import { Button } from "./ui/button";
@@ -44,6 +44,7 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [savingStatus, setSavingStatus] = useState<SavingStatus>("idle");
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [hasCreatedNote, setHasCreatedNote] = useState(false);
   const hasLoadedInitialData = useRef(false);
 
   const noteRef = useMemoFirebase(() => {
@@ -69,17 +70,50 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
     }
   }, [note, isNoteLoading]);
 
+  // Generate note ID immediately on first meaningful input to prevent editor remounting
+  useEffect(() => {
+    // Skip if note already exists or has been created
+    if (noteId || hasCreatedNote || !user || !firestore) return;
+
+    // Check for meaningful content (non-whitespace title OR content)
+    const hasMeaningfulContent = title.trim() !== '' || content.trim() !== '';
+
+    if (hasMeaningfulContent) {
+      const createNote = async () => {
+        try {
+          const timestamp = serverTimestamp();
+          const collectionRef = collection(firestore, `users/${user.uid}/notes`);
+          const newDocRef = await addDoc(collectionRef, {
+            title: title.trim(),
+            content: content.trim(),
+            tags: [],
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            userId: user.uid,
+            pinned: false,
+          });
+          setNoteId(newDocRef.id);
+          setHasCreatedNote(true);
+          router.replace(`/notes/${newDocRef.id}`, { scroll: false });
+        } catch (error) {
+          console.error("Failed to create note:", error);
+        }
+      };
+
+      createNote();
+    }
+  }, [title, content, noteId, hasCreatedNote, user, firestore, router]);
+
 
   const saveNote = useCallback(async () => {
-    if (!user || !firestore || isInitialLoad) return;
+    if (!user || !firestore || isInitialLoad || !noteId) return;
 
+    // Prevent saving completely empty notes (no title AND no content)
     const hasContent = title.trim() !== '' || content.trim() !== '';
-    const noteExists = !!noteId;
-
-    if (!noteExists && !hasContent) {
-        return;
+    if (!hasContent) {
+      return;
     }
-    
+
     const hasChanged = note ? title !== note.title || content !== note.content || JSON.stringify(tags) !== JSON.stringify(note.tags || []) : hasContent;
 
     if (!hasChanged) {
@@ -97,28 +131,16 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
     };
 
     try {
-        if (noteId) {
-            const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
-            await setDocumentNonBlocking(docRef, noteData, { merge: true });
-        } else {
-            const collectionRef = collection(firestore, `users/${user.uid}/notes`);
-            const newDocRef = await addDoc(collectionRef, {
-                ...noteData,
-                createdAt: timestamp,
-                userId: user.uid,
-                pinned: false,
-            });
-            setNoteId(newDocRef.id);
-            router.replace(`/notes/${newDocRef.id}`, { scroll: false });
-        }
-        
+        const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
+        await setDocumentNonBlocking(docRef, noteData, { merge: true });
+
         setSavingStatus("saved");
     } catch (error) {
         console.error("Failed to save note:", error);
         setSavingStatus("idle");
     }
 
-  }, [title, content, tags, user, firestore, noteId, router, isInitialLoad, note]);
+  }, [title, content, tags, user, firestore, noteId, isInitialLoad, note]);
 
   useKeyboardShortcuts({ onSave: saveNote });
 
@@ -177,6 +199,23 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
       document.body.classList.remove('overflow-hidden');
     }
   }, [isFullScreen]);
+
+  // Cleanup: Delete empty note if user navigates away without adding content
+  useEffect(() => {
+    return () => {
+      // Only cleanup if this was a newly created note
+      if (hasCreatedNote && noteId && user && firestore) {
+        const hasContent = title.trim() !== '' || content.trim() !== '';
+        if (!hasContent) {
+          // Delete the empty note
+          const docRef = doc(firestore, `users/${user.uid}/notes`, noteId);
+          deleteDoc(docRef).catch(error => {
+            console.error("Failed to delete empty note:", error);
+          });
+        }
+      }
+    };
+  }, [hasCreatedNote, noteId, title, content, user, firestore]);
 
 
   const handleTagInputKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
@@ -292,10 +331,9 @@ export function NoteForm({ noteId: initialNoteId }: NoteFormProps) {
               "relative",
               isFullScreen && "flex-grow min-h-0 overflow-y-auto"
             )}>
-              <RichTextEditor 
-                key={`editor-${noteId || 'new'}`}
-                value={content} 
-                onChange={setContent} 
+              <RichTextEditor
+                value={content}
+                onChange={setContent}
                 isFullScreen={isFullScreen}
                 ariaLabel="Note content"
               />
